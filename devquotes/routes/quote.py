@@ -33,5 +33,36 @@ class QuoteList(Resource):
         return db_client.create_quote({
             'author': args['author'],
             'quotation':  args['quotation'],
-            'source': args['source'].strip() if args['source'].strip() else None
+            'source': args['source'].strip() if args['source'] else None
+        }), 201
+
+
+class Quote(Resource):
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('author', type=str, required=True)
+        self.parser.add_argument('quotation', type=str, required=True)
+        self.parser.add_argument('source', type=str, required=False)
+        self.parser.add_argument('likes', type=int, required=False)
+
+    @marshal_with(quote_fields)
+    def get(self, id):  # pylint: disable=redefined-builtin
+        return db_client.get_quote(id)
+
+    @marshal_with(quote_fields)
+    def patch(self, id):  # pylint: disable=redefined-builtin
+        args = self.parser.parse_args()
+        quote = db_client.get_quote(id)
+
+        return db_client.update_quote(quote, {
+            'author': args['author'],
+            'quotation': args['quotation'],
+            'source': args['source'].strip() if args['source'].strip() else None,
+            'likes': args['likes'] if args['likes'] else quote.likes,
         })
+
+    def delete(self, id):  # pylint: disable=redefined-builtin
+        quote = db_client.get_quote(id)
+        db_client.delete_quote(quote)
+        return '', 204

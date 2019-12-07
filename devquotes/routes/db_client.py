@@ -26,3 +26,15 @@ def create_quote(data):
 def get_quotes(page, per_page):
     query = Quote.query.order_by(Quote.created_at.desc())
     return _paginate(query, page, per_page)
+
+
+def get_quote(id):  # pylint: disable=redefined-builtin
+    return Quote.get(id)
+
+
+def update_quote(quote, data):
+    return quote.update(**data)
+
+
+def delete_quote(quote):
+    quote.delete()

@@ -14,10 +14,11 @@ def init_app(app):
     firebase_admin.initialize_app()
 
     from .auth import Token
-    from .quote import QuoteList
+    from .quote import QuoteList, Quote
 
     api.init_app(bp)
     api.add_resource(Token, '/auth/token')
     api.add_resource(QuoteList, '/quotes')
+    api.add_resource(Quote, '/quotes/<int:id>')
 
     app.register_blueprint(bp, url_prefix='/v1')
