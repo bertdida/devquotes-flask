@@ -29,8 +29,9 @@ quote_fields = {
 }
 
 quotes_fields = {
-    'next': PaginationUrl(attribute='next_num'),
-    'previous': PaginationUrl(attribute='prev_num'),
+    'curr_page': fields.Integer(attribute='page'),
+    'next_page': PaginationUrl(attribute='next_num'),
+    'prev_page': PaginationUrl(attribute='prev_num'),
     'total': fields.Integer(attribute='total'),
     'data': fields.List(fields.Nested(quote_fields), attribute='items'),
 }
