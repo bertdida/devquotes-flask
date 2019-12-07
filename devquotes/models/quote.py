@@ -1,11 +1,12 @@
 from datetime import datetime
 
 from . import db
+from .mixins import BaseMixin
 
 utcnow = datetime.utcnow
 
 
-class Quote(db.Model):
+class Quote(BaseMixin, db.Model):
     __tablename__ = 'quote'
 
     id = db.Column(db.Integer, primary_key=True)

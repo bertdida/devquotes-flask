@@ -8,8 +8,10 @@ from flask import current_app
 from firebase_admin import auth
 
 from .fields import user_fields
-from devquotes.models import db
-from devquotes.models.user import User
+from .db_client import (
+    get_user,
+    create_user
+)
 
 
 class Token(Resource):
@@ -27,14 +29,11 @@ class Token(Resource):
         except Exception:  # pylint: disable=broad-except
             abort(401)
 
-        firebase_user_id = firebase_user['user_id']
-        user = User.query.filter_by(firebase_user_id=firebase_user_id).scalar()
+        user = get_user(firebase_user_id=firebase_user['user_id'])
         if not user:
-            user = User()
-            user.firebase_user_id = firebase_user_id
-            user.is_admin = firebase_user['email'] in current_app.config['ADMINS']
-
-            db.session.add(user)
-            db.session.commit()
+            user = create_user({
+                'firebase_user_id': firebase_user['user_id'],
+                'is_admin': firebase_user['email'] in current_app.config['ADMINS']
+            })
 
         return user

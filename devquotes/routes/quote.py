@@ -4,9 +4,8 @@ from flask_restful import (
     Resource,
 )
 
+from .db_client import create_quote
 from .fields import quote_fields
-from devquotes.models import db
-from devquotes.models.quote import Quote
 
 
 class QuoteList(Resource):
@@ -20,14 +19,8 @@ class QuoteList(Resource):
     @marshal_with(quote_fields)
     def post(self):
         args = self.parser.parse_args()
-
-        quote = Quote()
-        quote.author = args['author']
-        quote.quotation = args['quotation']
-        quote.source = args['source'].strip() \
-            if args['source'].strip() else None
-
-        db.session.add(quote)
-        db.session.commit()
-
-        return quote
+        return create_quote({
+            'author': args['author'],
+            'quotation':  args['quotation'],
+            'source': args['source'].strip() if args['source'].strip() else None
+        })
