@@ -1,17 +1,14 @@
+from firebase_admin import auth
+from flask import current_app
 from flask_restful import (
     abort,
     marshal_with,
     Resource,
     reqparse,
 )
-from flask import current_app
-from firebase_admin import auth
 
+from . import db_client
 from .fields import user_fields
-from .db_client import (
-    get_user,
-    create_user
-)
 
 
 class Token(Resource):
@@ -29,9 +26,9 @@ class Token(Resource):
         except Exception:  # pylint: disable=broad-except
             abort(401)
 
-        user = get_user(firebase_user_id=firebase_user['user_id'])
+        user = db_client.get_user(firebase_user_id=firebase_user['user_id'])
         if not user:
-            user = create_user({
+            user = db_client.create_user({
                 'firebase_user_id': firebase_user['user_id'],
                 'is_admin': firebase_user['email'] in current_app.config['ADMINS']
             })
