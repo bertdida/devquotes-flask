@@ -14,23 +14,23 @@ from .fields import (
 
 class QuoteList(Resource):
 
-    def __init__(self):
-        self.parser = reqparse.RequestParser()
-        self.parser.add_argument('page', type=int, location='args')
-        self.parser.add_argument('per_page', type=int, location='args')
-
-        self.parser.add_argument('author', type=str, required=True)
-        self.parser.add_argument('quotation', type=str, required=True)
-        self.parser.add_argument('source', type=str, required=False)
-
     @marshal_with(quotes_fields)
     def get(self):
-        args = self.parser.parse_args()
+        parser = reqparse.RequestParser()
+        parser.add_argument('page', type=int, location='args')
+        parser.add_argument('per_page', type=int, location='args')
+        args = parser.parse_args()
+
         return db_client.get_quotes(args['page'], args['per_page'])
 
     @marshal_with(quote_fields)
     def post(self):
-        args = self.parser.parse_args()
+        parser = reqparse.RequestParser()
+        parser.add_argument('author', type=str, required=True)
+        parser.add_argument('quotation', type=str, required=True)
+        parser.add_argument('source', type=str, required=False)
+        args = parser.parse_args()
+
         return db_client.create_quote({
             'author': args['author'],
             'quotation':  args['quotation'],
@@ -39,13 +39,6 @@ class QuoteList(Resource):
 
 
 class Quote(Resource):
-
-    def __init__(self):
-        self.parser = reqparse.RequestParser()
-        self.parser.add_argument('author', type=str, required=True)
-        self.parser.add_argument('quotation', type=str, required=True)
-        self.parser.add_argument('source', type=str, required=False)
-        self.parser.add_argument('likes', type=int, required=False)
 
     @marshal_with(quote_fields)
     def get(self, id):  # pylint: disable=redefined-builtin
@@ -61,7 +54,13 @@ class Quote(Resource):
         if not quote:
             abort(404)
 
-        args = self.parser.parse_args()
+        parser = reqparse.RequestParser()
+        parser.add_argument('author', type=str, required=True)
+        parser.add_argument('quotation', type=str, required=True)
+        parser.add_argument('source', type=str, required=False)
+        parser.add_argument('likes', type=int, required=False)
+        args = parser.parse_args()
+
         return db_client.update_quote(quote, {
             'author': args['author'],
             'quotation': args['quotation'],
