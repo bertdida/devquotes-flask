@@ -1,4 +1,5 @@
 from flask_restful import (
+    abort,
     marshal_with,
     reqparse,
     Resource,
@@ -48,13 +49,19 @@ class Quote(Resource):
 
     @marshal_with(quote_fields)
     def get(self, id):  # pylint: disable=redefined-builtin
-        return db_client.get_quote(id)
+        quote = db_client.get_quote(id)
+        if not quote:
+            abort(404)
+
+        return quote
 
     @marshal_with(quote_fields)
     def patch(self, id):  # pylint: disable=redefined-builtin
-        args = self.parser.parse_args()
         quote = db_client.get_quote(id)
+        if not quote:
+            abort(404)
 
+        args = self.parser.parse_args()
         return db_client.update_quote(quote, {
             'author': args['author'],
             'quotation': args['quotation'],
@@ -64,5 +71,8 @@ class Quote(Resource):
 
     def delete(self, id):  # pylint: disable=redefined-builtin
         quote = db_client.get_quote(id)
+        if not quote:
+            abort(404)
+
         db_client.delete_quote(quote)
         return '', 204
