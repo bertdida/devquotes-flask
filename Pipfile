@@ -15,6 +15,7 @@ flask-migrate = "*"
 flask-jwt-extended = "*"
 flask-cors = "*"
 flask-restful = "*"
+flask-script = "*"
 
 [requires]
 python_version = "3.8"
