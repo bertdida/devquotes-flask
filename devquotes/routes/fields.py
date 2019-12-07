@@ -1,16 +1,35 @@
+from flask import request
 from flask_restful import fields
 
 
+class PaginationUrl(fields.Raw):
+    def format(self, value):
+        if value is None:
+            return None
+
+        return '{}?page={}'.format(request.path, value)
+
+
 user_fields = {
-    'is_admin': fields.Boolean,
+    'data': {
+        'is_admin': fields.Boolean,
+    }
 }
 
 quote_fields = {
-    'id': fields.Integer,
-    'author': fields.String,
-    'quotation': fields.String,
-    'source': fields.String,
-    'likes': fields.Integer,
-    'created_at': fields.DateTime(dt_format='iso8601'),
-    'updated_at': fields.DateTime(dt_format='iso8601'),
+    'data': {
+        'id': fields.Integer,
+        'author': fields.String,
+        'quotation': fields.String,
+        'source': fields.String,
+        'likes': fields.Integer,
+        'created_at': fields.DateTime(dt_format='iso8601'),
+        'updated_at': fields.DateTime(dt_format='iso8601'),
+    }
+}
+
+quotes_fields = {
+    'next': PaginationUrl(attribute='next_num'),
+    'prev': PaginationUrl(attribute='prev_num'),
+    'data': fields.List(fields.Nested(quote_fields), attribute='items'),
 }
