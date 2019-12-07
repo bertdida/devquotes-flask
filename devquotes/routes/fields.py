@@ -32,6 +32,7 @@ quotes_fields = {
     'curr_page': fields.Integer(attribute='page'),
     'next_page': PaginationUrl(attribute='next_num'),
     'prev_page': PaginationUrl(attribute='prev_num'),
+    'per_page': fields.Integer(attribute='per_page'),
     'total': fields.Integer(attribute='total'),
     'data': fields.List(fields.Nested(quote_fields), attribute='items'),
 }
