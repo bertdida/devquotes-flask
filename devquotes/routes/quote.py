@@ -64,7 +64,7 @@ class Quote(Resource):
         return db_client.update_quote(quote, {
             'author': args['author'],
             'quotation': args['quotation'],
-            'source': args['source'].strip() if args['source'].strip() else None,
+            'source': args['source'].strip() if args['source'] else None,
             'likes': args['likes'] if args['likes'] else quote.likes,
         })
 
