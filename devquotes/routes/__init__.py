@@ -10,6 +10,11 @@ def init_app(app):
     jwt = JWTManager()
     jwt.init_app(app)
 
+    app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+    app.config['JWT_COOKIE_SECURE'] = True
+    app.config['JWT_COOKIE_CSRF_PROTECT'] = True
+    app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
+
     import firebase_admin
     firebase_admin.initialize_app()
 

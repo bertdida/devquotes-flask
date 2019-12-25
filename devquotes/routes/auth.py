@@ -1,8 +1,17 @@
 from firebase_admin import auth
-from flask import current_app
+from flask import (
+    current_app,
+    jsonify,
+)
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    set_access_cookies,
+    set_refresh_cookies,
+)
 from flask_restful import (
     abort,
-    marshal_with,
+    marshal,
     Resource,
     reqparse,
 )
@@ -17,7 +26,6 @@ class Token(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('token', type=str, required=True)
 
-    @marshal_with(user_fields)
     def post(self):
         args = self.parser.parse_args()
 
@@ -33,4 +41,15 @@ class Token(Resource):
                 'is_admin': firebase_user['email'] in current_app.config['ADMINS']
             })
 
-        return user
+        identity = {
+            'firebase_user_id': user.firebase_user_id,
+            'is_admin': user.is_admin,
+        }
+        access_token = create_access_token(identity)
+        refresh_token = create_refresh_token(identity)
+
+        response = jsonify(marshal(user, user_fields))
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+
+        return response
