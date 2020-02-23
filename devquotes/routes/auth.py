@@ -2,12 +2,15 @@ from firebase_admin import auth
 from flask import (
     current_app,
     jsonify,
+    make_response
 )
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
+    jwt_required,
     set_access_cookies,
     set_refresh_cookies,
+    unset_jwt_cookies,
 )
 from flask_restful import (
     abort,
@@ -54,3 +57,12 @@ class Token(Resource):
         set_refresh_cookies(response, refresh_token)
 
         return response
+
+
+class TokenRevoke(Resource):
+
+    @jwt_required
+    def post(self):
+        response = jsonify({})
+        unset_jwt_cookies(response)
+        return make_response(response, 204)
