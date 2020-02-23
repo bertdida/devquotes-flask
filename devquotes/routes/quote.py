@@ -64,18 +64,14 @@ class Quote(Resource):
         parser.add_argument('author', type=str, store_missing=False)
         parser.add_argument('quotation', type=str, store_missing=False)
         parser.add_argument('source', type=str, store_missing=False)
-        parser.add_argument('likes', type=int, default=0)
+        parser.add_argument('is_liked', type=bool)
         args = parser.parse_args()
-
         current_user = get_jwt_identity()
-        user_id = current_user['id']
-        user_is_admin = current_user['is_admin']
-        liked_quote = None
 
-        if args.pop('likes', None):
-            liked_quote = db_client.toggle_like(user_id, quote)
+        if args.pop('is_liked', None) is not None:
+            return db_client.toggle_quote_like(current_user['id'], quote)
 
-        if not user_is_admin:
+        if not current_user['is_admin']:
             abort(403)
 
         return db_client.update_quote(quote, args)

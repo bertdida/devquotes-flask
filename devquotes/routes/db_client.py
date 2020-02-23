@@ -41,21 +41,14 @@ def delete_quote(quote):
     quote.delete()
 
 
-def is_liked(user_id, quote_id):
-    like = Like.get_by(first=True, user_id=user_id, quote_id=quote_id)
-    if not like:
-        return False
-
-    return True
+def get_like(user_id, quote_id):
+    return Like.get_by(first=True, user_id=user_id, quote_id=quote_id)
 
 
-def toggle_like(user_id, quote):
-    like = Like.get_by(first=True, user_id=user_id, quote_id=quote.id)
-    if not like:
+def toggle_quote_like(user_id, quote):
+    try:
+        get_like(user_id, quote.id).delete()
+        return update_quote(quote, {'likes': quote.likes - 1})
+    except AttributeError:
         Like.create(user_id=user_id, quote_id=quote.id)
-        quote.likes += 1
-    else:
-        like.delete()
-        quote.likes -= 1
-
-    return update_quote(quote, {'likes': quote.likes})
+        return update_quote(quote, {'likes': quote.likes + 1})

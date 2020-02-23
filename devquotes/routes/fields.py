@@ -19,7 +19,7 @@ class IsQuoteLikedByCurrentUser(fields.Raw):
         if not current_user:
             return False
 
-        return db_client.is_liked(current_user['id'], quote_id)
+        return db_client.get_like(current_user['id'], quote_id) is not None
 
 
 user_fields = {
