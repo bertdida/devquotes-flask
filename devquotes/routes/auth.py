@@ -44,6 +44,7 @@ class Token(Resource):
         identity = {
             'firebase_user_id': user.firebase_user_id,
             'is_admin': user.is_admin,
+            'id': user.id,
         }
         access_token = create_access_token(identity)
         refresh_token = create_refresh_token(identity)
