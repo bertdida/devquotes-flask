@@ -1,5 +1,6 @@
 from flask import current_app
 
+from devquotes.models.like import Like
 from devquotes.models.user import User
 from devquotes.models.quote import Quote
 
@@ -38,3 +39,15 @@ def update_quote(quote, data):
 
 def delete_quote(quote):
     quote.delete()
+
+
+def toggle_like(user_id, quote):
+    like = Like.get_by(first=True, user_id=user_id, quote_id=quote.id)
+    if not like:
+        Like.create(user_id=user_id, quote_id=quote.id)
+        quote.likes += 1
+    else:
+        like.delete()
+        quote.likes -= 1
+
+    return update_quote(quote, {'likes': quote.likes})

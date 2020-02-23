@@ -1,3 +1,8 @@
+from flask_jwt_extended import (
+    get_jwt_identity,
+    jwt_optional,
+    jwt_required,
+)
 from flask_restful import (
     abort,
     marshal_with,
@@ -15,27 +20,29 @@ from .fields import (
 class QuoteList(Resource):
 
     @marshal_with(quotes_fields)
+    @jwt_optional
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('page', type=int, location='args')
         parser.add_argument('per_page', type=int, location='args')
         args = parser.parse_args()
+        page = args['page']
+        per_page = args['per_page']
 
-        return db_client.get_quotes(args['page'], args['per_page'])
+        current_user = get_jwt_identity()
+        if current_user:
+            return db_client.get_quotes(page, per_page)
 
     @marshal_with(quote_fields)
+    @jwt_required
     def post(self):
-        parser = reqparse.RequestParser()
+        parser = reqparse.RequestParser(trim=True)
         parser.add_argument('author', type=str, required=True)
         parser.add_argument('quotation', type=str, required=True)
-        parser.add_argument('source', type=str, required=False)
+        parser.add_argument('source', type=str)
         args = parser.parse_args()
 
-        return db_client.create_quote({
-            'author': args['author'],
-            'quotation':  args['quotation'],
-            'source': args['source'].strip() if args['source'] else None
-        }), 201
+        return db_client.create_quote(args), 201
 
 
 class Quote(Resource):
@@ -49,24 +56,31 @@ class Quote(Resource):
         return quote
 
     @marshal_with(quote_fields)
+    @jwt_required
     def patch(self, id):  # pylint: disable=redefined-builtin
         quote = db_client.get_quote(id)
         if not quote:
             abort(404)
 
-        parser = reqparse.RequestParser()
-        parser.add_argument('author', type=str, required=True)
-        parser.add_argument('quotation', type=str, required=True)
-        parser.add_argument('source', type=str, required=False)
-        parser.add_argument('likes', type=int, required=False)
+        parser = reqparse.RequestParser(trim=True)
+        parser.add_argument('author', type=str, store_missing=False)
+        parser.add_argument('quotation', type=str, store_missing=False)
+        parser.add_argument('source', type=str, store_missing=False)
+        parser.add_argument('likes', type=int, default=0)
         args = parser.parse_args()
 
-        return db_client.update_quote(quote, {
-            'author': args['author'],
-            'quotation': args['quotation'],
-            'source': args['source'].strip() if args['source'] else None,
-            'likes': args['likes'] if args['likes'] else quote.likes,
-        })
+        current_user = get_jwt_identity()
+        user_id = current_user['id']
+        user_is_admin = current_user['is_admin']
+        liked_quote = None
+
+        if args.pop('likes', None):
+            liked_quote = db_client.toggle_like(user_id, quote)
+
+        if not user_is_admin:
+            abort(403)
+
+        return db_client.update_quote(quote, args)
 
     def delete(self, id):  # pylint: disable=redefined-builtin
         quote = db_client.get_quote(id)
