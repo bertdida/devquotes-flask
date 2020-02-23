@@ -14,15 +14,17 @@ def init_app(app):
     app.config['JWT_COOKIE_SECURE'] = True
     app.config['JWT_COOKIE_CSRF_PROTECT'] = True
     app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 10  # seconds
 
     import firebase_admin
     firebase_admin.initialize_app()
 
-    from .auth import Token, TokenRevoke
+    from .auth import Token, TokenRevoke, TokenRefresh
     from .quote import QuoteList, Quote
 
     api.init_app(bp)
     api.add_resource(Token, '/auth/token')
+    api.add_resource(TokenRefresh, '/auth/refresh')
     api.add_resource(TokenRevoke, '/auth/revoke')
     api.add_resource(QuoteList, '/quotes')
     api.add_resource(Quote, '/quotes/<int:id>')

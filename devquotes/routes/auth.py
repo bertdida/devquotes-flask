@@ -7,6 +7,8 @@ from flask import (
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
+    get_jwt_identity,
+    jwt_refresh_token_required,
     jwt_required,
     set_access_cookies,
     set_refresh_cookies,
@@ -56,6 +58,18 @@ class Token(Resource):
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
 
+        return response
+
+
+class TokenRefresh(Resource):
+
+    @jwt_refresh_token_required
+    def post(self):
+        identity = get_jwt_identity()
+        access_token = create_access_token(identity)
+
+        response = jsonify({})
+        set_access_cookies(response, access_token)
         return response
 
 
