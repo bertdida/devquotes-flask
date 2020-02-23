@@ -14,7 +14,6 @@ def init_app(app):
     app.config['JWT_COOKIE_SECURE'] = True
     app.config['JWT_COOKIE_CSRF_PROTECT'] = True
     app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 10  # seconds
 
     import firebase_admin
     firebase_admin.initialize_app()
