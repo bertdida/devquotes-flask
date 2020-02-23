@@ -52,3 +52,10 @@ def toggle_quote_like(user_id, quote):
     except AttributeError:
         Like.create(user_id=user_id, quote_id=quote.id)
         return update_quote(quote, {'likes': quote.likes + 1})
+
+
+def get_user_liked_quotes(user_id, page, per_page):
+    query = Quote.query.join(Like, Quote.id == Like.quote_id)\
+        .join(User, Like.user_id == user_id)\
+        .order_by(Like.created_at.desc())
+    return _paginate(query, page, per_page)

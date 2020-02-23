@@ -20,6 +20,7 @@ def init_app(app):
 
     from .auth import Token, TokenRevoke, TokenRefresh
     from .quote import QuoteList, Quote
+    from .user import UserLikes
 
     api.init_app(bp)
     api.add_resource(Token, '/auth/token')
@@ -27,5 +28,6 @@ def init_app(app):
     api.add_resource(TokenRevoke, '/auth/revoke')
     api.add_resource(QuoteList, '/quotes')
     api.add_resource(Quote, '/quotes/<int:id>')
+    api.add_resource(UserLikes, '/me/likes')
 
     app.register_blueprint(bp, url_prefix='/v1')
