@@ -46,6 +46,7 @@ class QuoteList(Resource):
 class Quote(Resource):
 
     @marshal_with(quote_fields)
+    @jwt_optional
     def get(self, id):  # pylint: disable=redefined-builtin
         quote = db_client.get_quote(id)
         if not quote:
