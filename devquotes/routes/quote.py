@@ -29,9 +29,7 @@ class QuoteList(Resource):
         page = args['page']
         per_page = args['per_page']
 
-        current_user = get_jwt_identity()
-        if current_user:
-            return db_client.get_quotes(page, per_page)
+        return db_client.get_quotes(page, per_page)
 
     @marshal_with(quote_fields)
     @jwt_required
