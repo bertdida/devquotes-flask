@@ -17,7 +17,7 @@ class IsQuoteLikedByCurrentUser(fields.Raw):
     def format(self, quote_id):
         current_user = get_jwt_identity()
         if not current_user:
-            return None
+            return False
 
         return db_client.is_liked(current_user['id'], quote_id)
 
