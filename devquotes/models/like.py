@@ -8,6 +8,9 @@ utcnow = datetime.utcnow
 
 class Like(BaseMixin, db.Model):
     __tablename__ = 'like'
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'quote_id', name='uc_like'),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
