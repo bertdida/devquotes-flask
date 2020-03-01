@@ -18,6 +18,35 @@ from .fields import (
 )
 
 
+def _non_empty_string(value):
+    if not value:
+        raise ValueError("Must not be an empty string")
+    return value
+
+
+def _get_quote_reqparser():
+    parser = reqparse.RequestParser(trim=True)
+    parser.add_argument(
+        'author',
+        type=_non_empty_string,
+        required=True,
+        nullable=False
+    )
+    parser.add_argument(
+        'quotation',
+        type=_non_empty_string,
+        required=True,
+        nullable=False
+    )
+    parser.add_argument(
+        'source',
+        type=_non_empty_string,
+        nullable=False
+    )
+
+    return parser.parse_args()
+
+
 class QuoteList(Resource):
 
     @marshal_with(quotes_fields)
@@ -35,12 +64,7 @@ class QuoteList(Resource):
     @marshal_with(quote_fields)
     @jwt_required
     def post(self):
-        parser = reqparse.RequestParser(trim=True)
-        parser.add_argument('author', type=str, required=True)
-        parser.add_argument('quotation', type=str, required=True)
-        parser.add_argument('source', type=str)
-        args = parser.parse_args()
-
+        args = _get_quote_reqparser()
         return db_client.create_quote(args), 201
 
 
@@ -60,12 +84,7 @@ class Quote(Resource):
         if not current_user['is_admin']:
             abort(403)
 
-        parser = reqparse.RequestParser(trim=True)
-        parser.add_argument('author', type=str, store_missing=False)
-        parser.add_argument('quotation', type=str, store_missing=False)
-        parser.add_argument('source', type=str, store_missing=False)
-        args = parser.parse_args()
-
+        args = _get_quote_reqparser()
         return db_client.update_quote(quote, args)
 
     def delete(self, id):
