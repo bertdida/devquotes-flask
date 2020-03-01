@@ -68,6 +68,7 @@ def unlike_quote(quote):
 
 def get_user_liked_quotes(user_id, page, per_page):
     query = Quote.query\
+        .filter(Quote.likes > 0)\
         .join(Like, Like.quote_id == Quote.id)\
         .join(User, Like.user_id == user_id)\
         .order_by(Like.created_at.desc())
