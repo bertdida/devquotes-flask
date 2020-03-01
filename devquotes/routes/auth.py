@@ -1,3 +1,4 @@
+# pylint: disable=broad-except
 from firebase_admin import auth
 from flask import (
     current_app,
@@ -36,7 +37,7 @@ class Token(Resource):
 
         try:
             firebase_user = auth.verify_id_token(args['token'])
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             abort(401)
 
         user = db_client.get_user(firebase_user_id=firebase_user['user_id'])
