@@ -2,3 +2,4 @@
 .env
 *.sqlite
 firebase.json
+quotes.json
