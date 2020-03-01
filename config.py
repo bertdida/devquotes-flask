@@ -17,6 +17,7 @@ class Config:
 class Development(Config):
     ENV = 'development'
     DEBUG = True
+    SQLALCHEMY_ECHO = True
 
 
 class Production(Config):
