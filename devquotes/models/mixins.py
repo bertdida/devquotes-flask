@@ -1,3 +1,4 @@
+# pylint: disable=redefined-builtin
 from . import db
 
 
@@ -5,8 +6,12 @@ class BaseMixin:
     __table_args__ = {'extend_existing': True}
 
     @classmethod
-    def get(cls, id):  # pylint: disable=redefined-builtin
+    def get(cls, id):
         return cls.query.get(int(id))
+
+    @classmethod
+    def get_or_404(cls, id):
+        return cls.query.get_or_404(int(id))
 
     @classmethod
     def get_by(cls, first=False, **kwargs):
@@ -33,8 +38,13 @@ class BaseMixin:
     def update(self, commit=True, **kwargs):
         for attr, value in kwargs.items():
             setattr(self, attr, value)
-        return self.save() if commit else self
+
+        if commit:
+            return self.save()
+        return self
 
     def delete(self, commit=True):
         db.session.delete(self)
-        return commit and db.session.commit()
+
+        if commit:
+            return db.session.commit()
