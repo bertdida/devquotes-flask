@@ -43,6 +43,9 @@ def update_quote(quote, data):
 
 
 def delete_quote(quote):
+    likes = Like.get_by(first=False, quote_id=quote.id)
+    for like in likes:
+        delete_like(like)
     quote.delete()
 
 
