@@ -1,3 +1,4 @@
+# pylint: disable=redefined-builtin
 from flask_jwt_extended import (
     get_jwt_identity,
     jwt_optional,
@@ -47,40 +48,27 @@ class Quote(Resource):
 
     @marshal_with(quote_fields)
     @jwt_optional
-    def get(self, id):  # pylint: disable=redefined-builtin
-        quote = db_client.get_quote(id)
-        if not quote:
-            abort(404)
-
-        return quote
+    def get(self, id):
+        return db_client.get_quote_or_404(id)
 
     @marshal_with(quote_fields)
     @jwt_required
-    def patch(self, id):  # pylint: disable=redefined-builtin
-        quote = db_client.get_quote(id)
-        if not quote:
-            abort(404)
+    def patch(self, id):
+        quote = db_client.get_quote_or_404(id)
+
+        current_user = get_jwt_identity()
+        if not current_user['is_admin']:
+            abort(403)
 
         parser = reqparse.RequestParser(trim=True)
         parser.add_argument('author', type=str, store_missing=False)
         parser.add_argument('quotation', type=str, store_missing=False)
         parser.add_argument('source', type=str, store_missing=False)
-        parser.add_argument('is_liked', type=bool)
         args = parser.parse_args()
-        current_user = get_jwt_identity()
-
-        if args.pop('is_liked', None) is not None:
-            return db_client.toggle_quote_like(current_user['id'], quote)
-
-        if not current_user['is_admin']:
-            abort(403)
 
         return db_client.update_quote(quote, args)
 
-    def delete(self, id):  # pylint: disable=redefined-builtin
-        quote = db_client.get_quote(id)
-        if not quote:
-            abort(404)
-
+    def delete(self, id):
+        quote = db_client.get_quote_or_404(id)
         db_client.delete_quote(quote)
         return '', 204
