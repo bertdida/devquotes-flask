@@ -16,6 +16,7 @@ flask-jwt-extended = "*"
 flask-cors = "*"
 flask-restful = "*"
 flask-script = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.8"
