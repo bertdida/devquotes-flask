@@ -45,6 +45,22 @@ def get_like(user_id, quote_id):
     return Like.get_by(first=True, user_id=user_id, quote_id=quote_id)
 
 
+def create_like(data):
+    Like.create(**data)
+
+
+def delete_like(like):
+    like.delete()
+
+
+def like_quote(quote):
+    return update_quote(quote, {'likes': quote.likes + 1})
+
+
+def unlike_quote(quote):
+    return update_quote(quote, {'likes': quote.likes - 1})
+
+
 def toggle_quote_like(user_id, quote):
     try:
         get_like(user_id, quote.id).delete()
