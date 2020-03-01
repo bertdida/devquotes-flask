@@ -22,7 +22,7 @@ class Likes(Resource):
         parser.add_argument('id', type=int, required=True)
         args = parser.parse_args()
 
-        quote = db_client.get_quote(args['id'])
+        quote = db_client.get_quote_or_404(args['id'])
         current_user = get_jwt_identity()
 
         try:
@@ -43,7 +43,7 @@ class Like(Resource):
 
     @jwt_required
     def delete(self, quote_id):
-        quote = db_client.get_quote(quote_id)
+        quote = db_client.get_quote_or_404(quote_id)
         current_user = get_jwt_identity()
         like = db_client.get_like(current_user['id'], quote.id)
 
