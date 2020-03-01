@@ -1,3 +1,4 @@
+# pylint: disable=redefined-builtin
 from flask import current_app
 
 from devquotes.models.like import Like
@@ -29,8 +30,12 @@ def get_quotes(page, per_page):
     return _paginate(query, page, per_page)
 
 
-def get_quote(id):  # pylint: disable=redefined-builtin
+def get_quote(id):
     return Quote.get(id)
+
+
+def get_quote_or_404(id):
+    return Quote.get_or_404(id)
 
 
 def update_quote(quote, data):
@@ -59,15 +64,6 @@ def like_quote(quote):
 
 def unlike_quote(quote):
     return update_quote(quote, {'likes': quote.likes - 1})
-
-
-def toggle_quote_like(user_id, quote):
-    try:
-        get_like(user_id, quote.id).delete()
-        return update_quote(quote, {'likes': quote.likes - 1})
-    except AttributeError:
-        Like.create(user_id=user_id, quote_id=quote.id)
-        return update_quote(quote, {'likes': quote.likes + 1})
 
 
 def get_user_liked_quotes(user_id, page, per_page):
