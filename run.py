@@ -11,6 +11,11 @@ from devquotes.models.like import Like  # pylint: disable=unused-import
 app = create_app(config_class=os.environ['CONFIG_CLASS'])
 
 
+@app.shell_context_processor
+def make_shell_context():
+    return {'db': db}
+
+
 @app.before_first_request
 def create_database_tables():
     db.create_all()
