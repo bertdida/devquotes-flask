@@ -39,7 +39,10 @@ class QuoteList(Resource):
         page = args['page']
         per_page = args['per_page']
 
-        return db_client.get_quotes(page, per_page)
+        current_user = get_jwt_identity()
+        user_id = current_user['id'] if current_user else None
+
+        return db_client.get_quotes(user_id, page, per_page)
 
     @marshal_with(quote_fields)
     @jwt_required
@@ -53,7 +56,10 @@ class Quote(Resource):
     @marshal_with(quote_fields)
     @jwt_optional
     def get(self, id):
-        return db_client.get_quote_or_404(id)
+        current_user = get_jwt_identity()
+        user_id = current_user['id'] if current_user else None
+
+        return db_client.get_quote_or_404(user_id, id)
 
     @marshal_with(quote_fields)
     @jwt_required

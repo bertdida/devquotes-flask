@@ -36,8 +36,8 @@ class Likes(Resource):
         parser.add_argument('id', type=int, required=True)
         args = parser.parse_args()
 
-        quote = db_client.get_quote_or_404(args['id'])
         current_user = get_jwt_identity()
+        quote = db_client.get_quote_or_404(current_user['id'], args['id'])
 
         try:
             db_client.create_like({
@@ -57,11 +57,11 @@ class Like(Resource):
 
     @jwt_required
     def delete(self, quote_id):
-        quote = db_client.get_quote_or_404(quote_id)
         current_user = get_jwt_identity()
-        like = db_client.get_like(current_user['id'], quote.id)
+        quote = db_client.get_quote_or_404(current_user['id'], quote_id)
 
         try:
+            like = db_client.get_like(current_user['id'], quote.id)
             db_client.delete_like(like)
         except AttributeError:
             return {'success': False}
