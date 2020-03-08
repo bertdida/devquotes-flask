@@ -1,8 +1,5 @@
 from flask import request
-from flask_jwt_extended import get_jwt_identity
 from flask_restful import fields
-
-from . import db_client
 
 
 class PaginationUrl(fields.Raw):
@@ -11,15 +8,6 @@ class PaginationUrl(fields.Raw):
             return None
 
         return '{}?page={}'.format(request.path, value)
-
-
-class IsQuoteLikedByCurrentUser(fields.Raw):
-    def format(self, quote_id):
-        current_user = get_jwt_identity()
-        if not current_user:
-            return False
-
-        return db_client.get_like(current_user['id'], quote_id) is not None
 
 
 user_fields = {
@@ -35,7 +23,7 @@ quote_fields = {
         'quotation': fields.String,
         'source': fields.String,
         'likes': fields.Integer,
-        'is_liked': IsQuoteLikedByCurrentUser(attribute='id'),
+        'is_liked': fields.Boolean(attribute='is_liked'),
         'created_at': fields.DateTime(dt_format='iso8601'),
         'updated_at': fields.DateTime(dt_format='iso8601'),
     }
