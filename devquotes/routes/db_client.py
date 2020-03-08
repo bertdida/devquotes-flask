@@ -1,45 +1,78 @@
 # pylint: disable=redefined-builtin
-from flask import current_app
+from flask import abort, current_app
+from sqlalchemy import case
 
 from devquotes.models.like import Like
 from devquotes.models.user import User
 from devquotes.models.quote import Quote
 
 
-def _paginate(query, page, per_page):
+def _quote_base_query():
+    case_stmt = case([(Like.id.isnot(None), True)], else_=False)
+    return Quote.query.add_columns(case_stmt.label("is_liked"))
+
+
+def _prepare_quote(*args):
+    quote, is_liked = args
+    quote.is_liked = is_liked
+    return quote
+
+
+def _paginate_quote(query, page, per_page):
     if per_page is None:
         per_page = current_app.config.get('QUOTES_PER_PAGE', 10)
 
-    return query.paginate(page, per_page, error_out=True)
+    result = query.paginate(page, per_page, error_out=True)
+    result.items = [_prepare_quote(*item) for item in result.items]
+    return result
 
 
-def get_user(firebase_user_id):
-    return User.get_by(first=True, firebase_user_id=firebase_user_id)
+def get_quotes(user_id, page, per_page):
+    query = _quote_base_query()\
+        .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))\
+        .order_by(Quote.created_at.desc())
+
+    return _paginate_quote(query, page, per_page)
 
 
-def create_user(data):
-    return User.create(**data)
+def get_user_liked_quotes(user_id, page, per_page):
+    query = _quote_base_query()\
+        .join(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))\
+        .filter(Quote.likes > 0)\
+        .order_by(Like.created_at.desc())
+
+    return _paginate_quote(query, page, per_page)
 
 
-def create_quote(data):
-    return Quote.create(**data)
+def get_quote_or_404(user_id, quote_id):
+    result = _quote_base_query()\
+        .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))\
+        .filter(Quote.id == quote_id)\
+        .first()
+
+    if result is None:
+        abort(404)
+
+    quote, like_id = result
+    return _prepare_quote(quote, like_id)
 
 
-def get_quotes(page, per_page):
-    query = Quote.query.order_by(Quote.created_at.desc())
-    return _paginate(query, page, per_page)
+def like_quote(quote):
+    updated_quote = update_quote(quote, {'likes': quote.likes + 1})
+    return _prepare_quote(updated_quote, True)
 
 
-def get_quote(id):
-    return Quote.get(id)
-
-
-def get_quote_or_404(id):
-    return Quote.get_or_404(id)
+def unlike_quote(quote):
+    updated_quote = update_quote(quote, {'likes': quote.likes - 1})
+    return _prepare_quote(updated_quote, False)
 
 
 def update_quote(quote, data):
     return quote.update(**data)
+
+
+def create_quote(data):
+    return Quote.create(**data)
 
 
 def delete_quote(quote):
@@ -61,19 +94,9 @@ def delete_like(like):
     like.delete()
 
 
-def like_quote(quote):
-    return update_quote(quote, {'likes': quote.likes + 1})
+def get_user(firebase_user_id):
+    return User.get_by(first=True, firebase_user_id=firebase_user_id)
 
 
-def unlike_quote(quote):
-    return update_quote(quote, {'likes': quote.likes - 1})
-
-
-def get_user_liked_quotes(user_id, page, per_page):
-    query = Quote.query\
-        .filter(Quote.likes > 0)\
-        .join(Like, Like.quote_id == Quote.id)\
-        .join(User, Like.user_id == user_id)\
-        .order_by(Like.created_at.desc())
-
-    return _paginate(query, page, per_page)
+def create_user(data):
+    return User.create(**data)
