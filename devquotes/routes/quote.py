@@ -27,7 +27,7 @@ def _get_quote_args():
     return parser.parse_args()
 
 
-class QuoteList(Resource):
+class Quotes(Resource):
 
     @marshal_with(quotes_fields)
     @jwt_optional
@@ -55,25 +55,31 @@ class Quote(Resource):
 
     @marshal_with(quote_fields)
     @jwt_optional
-    def get(self, id):
+    def get(self, quote_id):
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
-        return db_client.get_quote_or_404(user_id, id)
+        return db_client.get_quote_or_404(user_id, quote_id)
 
     @marshal_with(quote_fields)
     @jwt_required
-    def patch(self, id):
-        quote = db_client.get_quote_or_404(id)
-
+    def patch(self, quote_id):
         current_user = get_jwt_identity()
+        quote = db_client.get_quote_or_404(current_user['id'], quote_id)
+
         if not current_user['is_admin']:
             abort(403)
 
         args = _get_quote_args()
         return db_client.update_quote(quote, args)
 
-    def delete(self, id):
-        quote = db_client.get_quote_or_404(id)
+    @jwt_required
+    def delete(self, quote_id):
+        current_user = get_jwt_identity()
+        quote = db_client.get_quote_or_404(current_user['id'], quote_id)
+
+        if not current_user['is_admin']:
+            abort(403)
+
         db_client.delete_quote(quote)
         return '', 204

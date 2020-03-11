@@ -19,15 +19,15 @@ def init_app(app):
     firebase_admin.initialize_app()
 
     from .auth import Token, TokenRevoke, TokenRefresh
-    from .quote import QuoteList, Quote
+    from .quote import Quotes, Quote
     from .likes import Likes, Like
 
     api.init_app(bp)
     api.add_resource(Token, '/auth/token')
     api.add_resource(TokenRefresh, '/auth/refresh')
     api.add_resource(TokenRevoke, '/auth/revoke')
-    api.add_resource(QuoteList, '/quotes')
-    api.add_resource(Quote, '/quotes/<int:id>')
+    api.add_resource(Quotes, '/quotes')
+    api.add_resource(Quote, '/quotes/<int:quote_id>')
     api.add_resource(Likes, '/likes')
     api.add_resource(Like, '/likes/<int:quote_id>')
 
