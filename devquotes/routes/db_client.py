@@ -1,7 +1,9 @@
 # pylint: disable=redefined-builtin
-from flask import abort, current_app
+from flask import current_app
+from flask_restful import abort
 from sqlalchemy import case
 
+from .utils import _set_attributes
 from devquotes.models.like import Like
 from devquotes.models.user import User
 from devquotes.models.quote import Quote
@@ -10,13 +12,6 @@ from devquotes.models.quote import Quote
 def _quote_base_query():
     case_stmt = case([(Like.id.isnot(None), True)], else_=False)
     return Quote.query.add_columns(case_stmt.label("is_liked"))
-
-
-def _set_attributes(obj, **attributes):
-    for key, value in attributes.items():
-        setattr(obj, key, value)
-
-    return obj
 
 
 def _paginate_quote(query, page, per_page):
