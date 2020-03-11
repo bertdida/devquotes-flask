@@ -6,7 +6,11 @@ api = Api()
 
 
 def init_app(app):
+    from flask_cors import CORS
     from flask_jwt_extended import JWTManager
+
+    CORS(app)
+
     jwt = JWTManager()
     jwt.init_app(app)
 
