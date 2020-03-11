@@ -1,4 +1,3 @@
-# pylint: disable=redefined-builtin
 from flask import current_app
 from flask_restful import abort
 from sqlalchemy import case
