@@ -1,4 +1,3 @@
-# pylint: disable=redefined-builtin
 from flask_jwt_extended import (
     get_jwt_identity,
     jwt_optional,
