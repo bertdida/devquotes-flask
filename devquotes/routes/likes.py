@@ -28,7 +28,7 @@ class Likes(Resource):
         per_page = args['per_page']
 
         current_user = get_jwt_identity()
-        return db_client.get_user_liked_quotes(current_user['id'], page, per_page)
+        return db_client.get_user_liked_quotes(page, per_page, current_user['id'])
 
     @jwt_required
     def post(self):
@@ -37,7 +37,7 @@ class Likes(Resource):
         args = parser.parse_args()
 
         current_user = get_jwt_identity()
-        quote = db_client.get_quote_or_404(current_user['id'], args['id'])
+        quote = db_client.get_quote_or_404(args['id'], current_user['id'])
 
         try:
             db_client.create_like({
@@ -58,7 +58,7 @@ class Like(Resource):
     @jwt_required
     def delete(self, quote_id):
         current_user = get_jwt_identity()
-        quote = db_client.get_quote_or_404(current_user['id'], quote_id)
+        quote = db_client.get_quote_or_404(quote_id, current_user['id'])
 
         try:
             like = db_client.get_like(current_user['id'], quote.id)

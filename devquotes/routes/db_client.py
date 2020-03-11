@@ -27,7 +27,7 @@ def _paginate_quote(query, page, per_page):
     return result
 
 
-def get_quotes(user_id, page, per_page):
+def get_quotes(page, per_page, user_id=None):
     query = _quote_base_query()\
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))\
         .order_by(Quote.created_at.desc())
@@ -35,7 +35,7 @@ def get_quotes(user_id, page, per_page):
     return _paginate_quote(query, page, per_page)
 
 
-def get_user_liked_quotes(user_id, page, per_page):
+def get_user_liked_quotes(page, per_page, user_id=None):
     query = _quote_base_query()\
         .join(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))\
         .filter(Quote.likes > 0)\
@@ -44,7 +44,7 @@ def get_user_liked_quotes(user_id, page, per_page):
     return _paginate_quote(query, page, per_page)
 
 
-def get_quote_or_404(user_id, quote_id):
+def get_quote_or_404(quote_id, user_id=None):
     result = _quote_base_query()\
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))\
         .filter(Quote.id == quote_id)\

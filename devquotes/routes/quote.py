@@ -42,7 +42,7 @@ class Quotes(Resource):
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
-        return db_client.get_quotes(user_id, page, per_page)
+        return db_client.get_quotes(page, per_page, user_id)
 
     @marshal_with(quote_fields)
     @jwt_required
@@ -59,13 +59,13 @@ class Quote(Resource):
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
-        return db_client.get_quote_or_404(user_id, quote_id)
+        return db_client.get_quote_or_404(quote_id, user_id)
 
     @marshal_with(quote_fields)
     @jwt_required
     def patch(self, quote_id):
         current_user = get_jwt_identity()
-        quote = db_client.get_quote_or_404(current_user['id'], quote_id)
+        quote = db_client.get_quote_or_404(quote_id, current_user['id'])
 
         if not current_user['is_admin']:
             abort(403)
@@ -76,7 +76,7 @@ class Quote(Resource):
     @jwt_required
     def delete(self, quote_id):
         current_user = get_jwt_identity()
-        quote = db_client.get_quote_or_404(current_user['id'], quote_id)
+        quote = db_client.get_quote_or_404(quote_id, current_user['id'])
 
         if not current_user['is_admin']:
             abort(403)
