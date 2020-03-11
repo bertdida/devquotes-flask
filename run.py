@@ -1,6 +1,9 @@
 import json
 import operator
 import os
+from random import shuffle
+
+from sqlalchemy.exc import DataError
 
 from devquotes import create_app
 from devquotes.models import db
@@ -38,9 +41,13 @@ def routes():
 def seed():
     with open('quotes.json') as json_file:
         quotes = json.load(json_file)
-        quote_objects = [Quote(**data) for data in quotes]
-        db.session.bulk_save_objects(quote_objects)
-        db.session.commit()
+        shuffle(quotes)
+
+        for data in quotes:
+            try:
+                Quote.create(**data)
+            except DataError:
+                pass
 
 
 if __name__ == '__main__':
