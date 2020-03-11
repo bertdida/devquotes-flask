@@ -12,10 +12,11 @@ def _quote_base_query():
     return Quote.query.add_columns(case_stmt.label("is_liked"))
 
 
-def _prepare_quote(*args):
-    quote, is_liked = args
-    quote.is_liked = is_liked
-    return quote
+def _set_attributes(obj, **attributes):
+    for key, value in attributes.items():
+        setattr(obj, key, value)
+
+    return obj
 
 
 def _paginate_quote(query, page, per_page):
@@ -23,7 +24,10 @@ def _paginate_quote(query, page, per_page):
         per_page = current_app.config.get('QUOTES_PER_PAGE', 10)
 
     result = query.paginate(page, per_page, error_out=True)
-    result.items = [_prepare_quote(*item) for item in result.items]
+    result.items = [
+        _set_attributes(quote, is_liked=is_liked) for quote, is_liked in result.items
+    ]
+
     return result
 
 
@@ -53,18 +57,18 @@ def get_quote_or_404(quote_id, user_id=None):
     if result is None:
         abort(404)
 
-    quote, like_id = result
-    return _prepare_quote(quote, like_id)
+    quote, is_liked = result
+    return _set_attributes(quote, is_liked=is_liked)
 
 
 def like_quote(quote):
     updated_quote = update_quote(quote, {'likes': quote.likes + 1})
-    return _prepare_quote(updated_quote, True)
+    return _set_attributes(updated_quote, is_liked=True)
 
 
 def unlike_quote(quote):
     updated_quote = update_quote(quote, {'likes': quote.likes - 1})
-    return _prepare_quote(updated_quote, False)
+    return _set_attributes(updated_quote, is_liked=False)
 
 
 def update_quote(quote, data):
