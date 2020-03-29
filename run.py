@@ -50,5 +50,19 @@ def seed():
                 pass
 
 
+def _write_firebase_creds_to_file(filename, creds):
+    creds_escaped = creds.encode().decode('unicode_escape')
+    creds_json = json.loads(creds_escaped)
+
+    with open(filename, 'w') as creds_file:
+        json.dump(creds_json, creds_file)
+
+
 if __name__ == '__main__':
+    firebase_creds = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_JSON')
+    firebase_creds_filename = 'firebase.json'
+
+    if not os.path.isfile(firebase_creds_filename) and firebase_creds is not None:
+        _write_firebase_creds_to_file(firebase_creds_filename, firebase_creds)
+
     app.run()
