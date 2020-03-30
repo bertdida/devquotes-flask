@@ -24,7 +24,7 @@ def init_app(app):
 
     creds = app.config['FIREBASE_CREDENTIAL']
     creds_escaped = creds.encode().decode('unicode_escape')
-    creds_dict = json.loads(creds_escaped)
+    creds_dict = json.loads(creds_escaped, strict=False)
 
     credential = firebase_admin.credentials.Certificate(cert=creds_dict)
     firebase_admin.initialize_app(credential=credential)
