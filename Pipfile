@@ -18,6 +18,7 @@ flask-restful = "*"
 flask-script = "*"
 psycopg2 = "*"
 gunicorn = "*"
+google-auth = "*"
 
 [requires]
 python_version = "3.8"
