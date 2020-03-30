@@ -12,6 +12,7 @@ class Config:
         'sqlite:///' + os.path.join(basedir, 'database.sqlite')
 
     ADMINS = os.environ['ADMINS'].split(',')
+    FIREBASE_CREDENTIAL = os.environ['FIREBASE_CREDENTIAL']
 
 
 class Development(Config):
