@@ -19,8 +19,15 @@ def init_app(app):
     app.config['JWT_COOKIE_CSRF_PROTECT'] = True
     app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
 
+    import json
     import firebase_admin
-    firebase_admin.initialize_app()
+
+    creds = app.config['FIREBASE_CREDENTIAL']
+    creds_escaped = creds.encode().decode('unicode_escape')
+    creds_dict = json.loads(creds_escaped)
+
+    credential = firebase_admin.credentials.Certificate(cert=creds_dict)
+    firebase_admin.initialize_app(credential=credential)
 
     from .auth import Token, TokenRevoke, TokenRefresh
     from .quote import Quotes, Quote
