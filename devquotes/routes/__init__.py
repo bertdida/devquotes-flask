@@ -9,7 +9,7 @@ def init_app(app):
     from flask_cors import CORS
     from flask_jwt_extended import JWTManager
 
-    CORS(app)
+    CORS(app, supports_credentials=True)
 
     jwt = JWTManager()
     jwt.init_app(app)
