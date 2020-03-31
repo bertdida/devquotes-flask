@@ -1,5 +1,10 @@
 # pylint: disable=broad-except
 from firebase_admin import auth
+from firebase_admin.auth import (
+    InvalidIdTokenError,
+    ExpiredIdTokenError,
+    RevokedIdTokenError,
+)
 from flask import (
     current_app,
     jsonify,
@@ -37,8 +42,8 @@ class Token(Resource):
 
         try:
             firebase_user = auth.verify_id_token(args['token'])
-        except Exception:
-            abort(401)
+        except (ValueError, InvalidIdTokenError, ExpiredIdTokenError, RevokedIdTokenError) as e:
+            abort(401, message=str(e))
 
         user = db_client.get_user(firebase_user_id=firebase_user['user_id'])
         if not user:
