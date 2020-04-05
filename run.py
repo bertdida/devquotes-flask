@@ -1,5 +1,4 @@
 import json
-import operator
 import os
 from random import shuffle
 
@@ -22,19 +21,6 @@ def make_shell_context():
 @app.before_first_request
 def create_database_tables():
     db.create_all()
-
-
-@app.cli.command()
-def routes():
-    rules = []
-    for rule in app.url_map.iter_rules():
-        methods = ','.join(sorted(rule.methods))
-        rules.append((rule.endpoint, methods, str(rule)))
-
-    sort_by_rule = operator.itemgetter(2)
-    for endpoint, methods, rule in sorted(rules, key=sort_by_rule):
-        route = '{:50s} {:25s} {}'.format(endpoint, methods, rule)
-        print(route)
 
 
 @app.cli.command()
