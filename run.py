@@ -1,7 +1,7 @@
 import json
 import os
-from random import shuffle
 
+import click
 from sqlalchemy.exc import DataError
 
 from devquotes import create_app
@@ -24,16 +24,25 @@ def create_database_tables():
 
 
 @app.cli.command()
-def seed():
-    with open('quotes.json') as json_file:
-        quotes = json.load(json_file)
-        shuffle(quotes)
+@click.option(
+    '--filename',
+    required=True,
+    type=click.File('rb'),
+    help='The JSON file to parse.'
+)
+def seed(filename):
+    """Populate `quote` table in database."""
 
-        for data in quotes:
-            try:
-                Quote.create(**data)
-            except DataError:
-                pass
+    try:
+        quotes = json.load(filename)
+    except json.decoder.JSONDecodeError as e:
+        raise click.BadParameter(e)
+
+    for data in quotes:
+        try:
+            Quote.create(**data)
+        except DataError:
+            pass
 
 
 if __name__ == '__main__':
