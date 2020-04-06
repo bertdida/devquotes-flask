@@ -1,6 +1,7 @@
 from flask import current_app
 from flask_restful import abort
 from sqlalchemy import case
+from sqlalchemy.sql.expression import func
 
 from .utils import _set_attributes
 from devquotes.models.like import Like
@@ -50,6 +51,15 @@ def get_quote_or_404(quote_id, user_id=None):
 
     if result is None:
         abort(404)
+
+    quote, is_liked = result
+    return _set_attributes(quote, is_liked=is_liked)
+
+
+def get_quote_random(user_id=None):
+    result = _quote_base_query()\
+        .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))\
+        .order_by(func.random()).first()
 
     quote, is_liked = result
     return _set_attributes(quote, is_liked=is_liked)

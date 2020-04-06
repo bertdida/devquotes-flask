@@ -78,3 +78,14 @@ class Quote(Resource):
         db_client.delete_quote(quote)
 
         return '', 204
+
+
+class Random(Resource):
+
+    @marshal_with(quote_fields)
+    @jwt_optional
+    def get(self):
+        current_user = get_jwt_identity()
+        user_id = current_user['id'] if current_user else None
+
+        return db_client.get_quote_random(user_id)

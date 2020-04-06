@@ -30,7 +30,7 @@ def init_app(app):
     firebase_admin.initialize_app(credential=credential)
 
     from .auth import Token, TokenRevoke, TokenRefresh
-    from .quote import Quotes, Quote
+    from .quote import Quotes, Quote, Random as RandomQuote
     from .likes import Likes, Like
 
     api.init_app(bp)
@@ -39,6 +39,7 @@ def init_app(app):
     api.add_resource(TokenRevoke, '/auth/revoke')
     api.add_resource(Quotes, '/quotes')
     api.add_resource(Quote, '/quotes/<int:quote_id>')
+    api.add_resource(RandomQuote, '/quotes/random')
     api.add_resource(Likes, '/likes')
     api.add_resource(Like, '/likes/<int:quote_id>')
 
