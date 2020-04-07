@@ -6,6 +6,9 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 autopep8 = "*"
+pytest = "*"
+jsonschema = "*"
+jsonref = "*"
 
 [packages]
 flask = "*"
