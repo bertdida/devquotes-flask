@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quotes response schema",
+  "type": "object",
+  "required": ["curr_page", "next_page", "prev_page", "per_page", "total"],
+  "properties": {
+    "curr_page": {
+      "type": "number"
+    },
+    "next_page": {
+      "type": ["null", "string"]
+    },
+    "prev_page": {
+      "type": ["null", "number"]
+    },
+    "per_page": {
+      "type": "number"
+    },
+    "total": {
+      "type": "number"
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "$ref": "quote.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quote response schema",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": [
+        "id",
+        "author",
+        "quotation",
+        "source",
+        "likes",
+        "is_liked",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "author": {
+          "type": "string"
+        },
+        "quotation": {
+          "type": "string"
+        },
+        "source": {
+          "type": ["null", "string"]
+        },
+        "likes": {
+          "type": "number"
+        },
+        "is_liked": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
