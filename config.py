@@ -5,7 +5,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ['SECRET_KEY']
+
     JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']
+    JWT_TOKEN_LOCATION = 'cookies'
+    JWT_COOKIE_SECURE = True
+    JWT_COOKIE_CSRF_PROTECT = True
+    JWT_ERROR_MESSAGE_KEY = 'message'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or \
@@ -28,4 +33,6 @@ class Production(Config):
 
 class Testing(Config):
     TESTING = True
+    JWT_COOKIE_SECURE = False
+    JWT_COOKIE_CSRF_PROTECT = False
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
