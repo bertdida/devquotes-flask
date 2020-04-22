@@ -5,3 +5,4 @@ firebase.json
 quotes.json
 __pycache__/
 !tests/**/quotes.json
+act/
