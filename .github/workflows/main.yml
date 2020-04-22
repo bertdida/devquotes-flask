@@ -1,0 +1,56 @@
+name: Deploy workflow
+
+on:
+  repository_dispatch:
+    types: master_deploy
+  push:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Python 3.x
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.x
+
+      - name: Install pipenv
+        uses: dschep/install-pipenv-action@v1
+
+      - name: Install dependencies
+        run: |
+          pipenv install --dev
+
+      - name: Run test
+        run: |
+          pipenv run pytest
+        env:
+          SECRET_KEY: 8b1e007ba2
+          JWT_SECRET_KEY: 396eda940e
+          ADMINS: ${{ secrets.ADMINS }}
+          FIREBASE_CREDENTIAL: ${{ secrets.FIREBASE_CREDENTIAL }}
+
+  deploy:
+    name: Deploy
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Push to Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY  }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+        run: git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master
