@@ -19,6 +19,8 @@ class Config:
     ADMINS = os.environ['ADMINS'].split(',')
     FIREBASE_CREDENTIAL = os.environ['FIREBASE_CREDENTIAL']
 
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+
 
 class Development(Config):
     ENV = 'development'
