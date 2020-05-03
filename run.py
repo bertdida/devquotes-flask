@@ -15,7 +15,12 @@ app = create_app(config_class=os.environ['CONFIG_CLASS'])
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db}
+    return {
+        'db': db,
+        'User': User,
+        'Quote': Quote,
+        'Like': Like,
+    }
 
 
 @app.before_first_request
