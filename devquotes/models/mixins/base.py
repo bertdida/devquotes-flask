@@ -1,5 +1,5 @@
 # pylint: disable=redefined-builtin
-from . import db
+from devquotes.models import db
 
 
 class BaseMixin:
