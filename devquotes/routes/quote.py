@@ -32,14 +32,20 @@ class Quotes(Resource):
     @jwt_optional
     def get(self):
         parser = reqparse.RequestParser()
+        parser.add_argument('q', type=str, location='args')
         parser.add_argument('page', type=int, location='args')
         parser.add_argument('per_page', type=int, location='args')
         args = parser.parse_args()
+
+        query = args['q']
         page = args['page']
         per_page = args['per_page']
 
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
+
+        if query:
+            return db_client.search_quotes(query, user_id)
 
         return db_client.get_quotes(page, per_page, user_id)
 
