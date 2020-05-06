@@ -1,13 +1,14 @@
 from datetime import datetime
 
 from . import db
-from .mixins import BaseMixin
+from .mixins import BaseMixin, SearchableMixin
 
 utcnow = datetime.utcnow
 
 
-class Quote(BaseMixin, db.Model):
+class Quote(BaseMixin, SearchableMixin, db.Model):
     __tablename__ = 'quote'
+    __searchable__ = ['author', 'quotation']
 
     id = db.Column(db.Integer, primary_key=True)
     author = db.Column(db.String(100), nullable=False)
