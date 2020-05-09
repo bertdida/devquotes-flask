@@ -19,13 +19,17 @@ class Config:
     ADMINS = os.environ['ADMINS'].split(',')
     FIREBASE_CREDENTIAL = os.environ['FIREBASE_CREDENTIAL']
 
-    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+    ELASTICSEARCH_URL = os.environ.get('AWS_ELASTICSEARCH_URL')
+    AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
+    AWS_SECRET_KEY = os.environ.get('AWS_SECRET_KEY')
+    AWS_REGION = os.environ.get('AWS_REGION')
 
 
 class Development(Config):
     ENV = 'development'
     DEBUG = True
     SQLALCHEMY_ECHO = True
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
 
 class Production(Config):
