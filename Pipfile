@@ -23,6 +23,7 @@ psycopg2 = "*"
 gunicorn = "*"
 google-auth = "*"
 elasticsearch = "*"
+requests-aws4auth = "*"
 
 [requires]
 python_version = "3.8"
