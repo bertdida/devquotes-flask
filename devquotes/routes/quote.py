@@ -1,9 +1,12 @@
+from functools import wraps
+
 from flask_jwt_extended import (
     get_jwt_identity,
     jwt_optional,
     jwt_required,
 )
 from flask_restful import (
+    abort,
     marshal_with,
     reqparse,
     Resource,
@@ -14,7 +17,18 @@ from .fields import (
     quote_fields,
     quotes_fields
 )
-from .utils import admin_only
+
+
+def _admin_only(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        current_user = get_jwt_identity()
+        if not current_user['is_admin']:
+            abort(403)
+
+        return func(args, **kwargs)
+
+    return wrapper
 
 
 def _get_quote_args():
@@ -68,7 +82,7 @@ class Quote(Resource):
 
     @marshal_with(quote_fields)
     @jwt_required
-    @admin_only
+    @_admin_only
     def patch(self, quote_id):
         args = _get_quote_args()
         current_user = get_jwt_identity()
@@ -77,7 +91,7 @@ class Quote(Resource):
         return db_client.update_quote(quote, args)
 
     @jwt_required
-    @admin_only
+    @_admin_only
     def delete(self, quote_id):
         current_user = get_jwt_identity()
         quote = db_client.get_quote_or_404(quote_id, current_user['id'])
