@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7d63bb103252e2462d24677755c5d79e90bc1c90a33b9dba64b8172ed411d417"
+            "sha256": "63d66530bc1ba5619b02b9ecd17c8b1b386b87c9ab09eff8aaa3d7116b2bb4a1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -63,6 +63,13 @@
                 "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"
             ],
             "version": "==7.1.2"
+        },
+        "decorator": {
+            "hashes": [
+                "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760",
+                "sha256:e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7"
+            ],
+            "version": "==4.4.2"
         },
         "firebase-admin": {
             "hashes": [
@@ -475,6 +482,19 @@
             ],
             "version": "==1.3.18"
         },
+        "sqlalchemy-searchable": {
+            "hashes": [
+                "sha256:b48e67ef238a154e4b8de84637ef9645c213a2367b1f1915dd2f65242b2f04b2"
+            ],
+            "index": "pypi",
+            "version": "==1.1.0"
+        },
+        "sqlalchemy-utils": {
+            "hashes": [
+                "sha256:7a7fab14bed80df065412bbf71a0a9b0bfeb4b7c111c2d9bffe57283082f3a6b"
+            ],
+            "version": "==0.36.6"
+        },
         "uritemplate": {
             "hashes": [
                 "sha256:07620c3f3f8eed1f12600845892b0e036a2420acf513c53f7de0abd911a5894f",
@@ -488,6 +508,12 @@
                 "sha256:88206b0eb87e6d677d424843ac5209e3fb9d0190d0ee169599165ec25e9d9115"
             ],
             "version": "==1.25.9"
+        },
+        "validators": {
+            "hashes": [
+                "sha256:31e8bb01b48b48940a021b8a9576b840f98fa06b91762ef921d02cb96d38727a"
+            ],
+            "version": "==0.15.0"
         },
         "werkzeug": {
             "hashes": [

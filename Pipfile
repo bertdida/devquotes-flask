@@ -22,6 +22,7 @@ flask-script = "*"
 psycopg2 = "*"
 gunicorn = "*"
 google-auth = "*"
+sqlalchemy-searchable = "*"
 
 [requires]
 python_version = "3.8"
