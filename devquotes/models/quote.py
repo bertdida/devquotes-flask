@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from flask_sqlalchemy import BaseQuery
 from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy_searchable import SearchQueryMixin
 
@@ -9,7 +10,7 @@ from .mixins import BaseMixin
 utcnow = datetime.utcnow
 
 
-class QuoteQuery(BaseMixin, SearchQueryMixin):
+class QuoteQuery(BaseQuery, BaseMixin, SearchQueryMixin):
     pass
 
 
