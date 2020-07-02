@@ -51,15 +51,15 @@ class Quotes(Resource):
         parser.add_argument('per_page', type=int, location='args')
         args = parser.parse_args()
 
-        query = args['q']
+        search_query = args['q']
         page = args['page']
         per_page = args['per_page']
 
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
-        if query:
-            return db_client.search_quotes(query, user_id)
+        if search_query:
+            return db_client.search_quotes(search_query, page, per_page, user_id)
 
         return db_client.get_quotes(page, per_page, user_id)
 

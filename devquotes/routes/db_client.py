@@ -38,21 +38,15 @@ def get_quotes(page, per_page, user_id=None):
     return _paginate_quote(query, page, per_page)
 
 
-def search_quotes(query, user_id=None):
-    ids = Quote.search_ids(query)
-    if not ids:
-        return _paginate_quote(Quote.query.filter_by(id=None), page=1, per_page=None)
-
-    whens = [(curr_id, index) for index, curr_id in enumerate(ids)]
+def search_quotes(search_query, page, per_page, user_id=None):
     query = (
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.id.in_(ids))
-        .order_by(case(whens, Quote.id))
+        .search(search_query, sort=True)
     )
 
-    return _paginate_quote(query, page=1, per_page=None)
+    return _paginate_quote(query, page, per_page)
 
 
 def get_user_liked_quotes(page, per_page, user_id=None):
