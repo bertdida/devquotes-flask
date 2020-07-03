@@ -9,6 +9,7 @@ autopep8 = "*"
 pytest = "*"
 jsonschema = "*"
 jsonref = "*"
+testing-postgresql = {editable = true,git = "https://github.com/tk0miya/testing.postgresql.git"}
 
 [packages]
 flask = "*"

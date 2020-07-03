@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "63d66530bc1ba5619b02b9ecd17c8b1b386b87c9ab09eff8aaa3d7116b2bb4a1"
+            "sha256": "07a15e0dcc50f970821d0e1d04d0eebde217916d89874ca729ff1cb566c988d1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -491,9 +491,9 @@
         },
         "sqlalchemy-utils": {
             "hashes": [
-                "sha256:7a7fab14bed80df065412bbf71a0a9b0bfeb4b7c111c2d9bffe57283082f3a6b"
+                "sha256:be319a16022b6a01e1d6c838340485beb4d34fd9c1c19d2303356804fa0faa09"
             ],
-            "version": "==0.36.6"
+            "version": "==0.36.7"
         },
         "uritemplate": {
             "hashes": [
@@ -631,6 +631,13 @@
             ],
             "version": "==20.4"
         },
+        "pg8000": {
+            "hashes": [
+                "sha256:79d2e761343e582dec6698cf7c06d49c33255cbafba29ff298dd4690fffb7d80",
+                "sha256:af97353076b8e5d271d91c64c8ca806e2157d11b7862c90ff6f0e23be0fc217d"
+            ],
+            "version": "==1.15.3"
+        },
         "pluggy": {
             "hashes": [
                 "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0",
@@ -681,12 +688,31 @@
             "index": "pypi",
             "version": "==5.4.3"
         },
+        "scramp": {
+            "hashes": [
+                "sha256:74815c25aad1fe0b5fb994e96c3de63e8695164358a80138352aaadfa4760350",
+                "sha256:d6865ed1d135ddb124a619d7cd3a5b505f69a7c92e248024dd7e48bc77752af5"
+            ],
+            "version": "==1.2.0"
+        },
         "six": {
             "hashes": [
                 "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259",
                 "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"
             ],
             "version": "==1.15.0"
+        },
+        "testing-postgresql": {
+            "editable": true,
+            "git": "https://github.com/tk0miya/testing.postgresql.git",
+            "ref": "c81ded434d00ec8424de0f9e1f4063c778c6aaa8"
+        },
+        "testing.common.database": {
+            "hashes": [
+                "sha256:965d80b2985315325dc358c3061b174a712f4d4d5bf6a80b58b11f9a1dd86d73",
+                "sha256:e3ed492bf480a87f271f74c53b262caf5d85c8bc09989a8f534fa2283ec52492"
+            ],
+            "version": "==2.0.3"
         },
         "toml": {
             "hashes": [
