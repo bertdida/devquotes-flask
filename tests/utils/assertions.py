@@ -4,7 +4,7 @@ import jsonref
 from jsonschema import validate
 
 
-def assert_valid_response_data(data, response):
+def assert_post_data_in_response(data, response):
     json = response.json
     for key, value in data.items():
         assert json['data'][key] == value
