@@ -1,9 +1,14 @@
 from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, BaseQuery
 
-from sqlalchemy_searchable import make_searchable
+from sqlalchemy_searchable import SearchQueryMixin, make_searchable
 
-db = SQLAlchemy()
+
+class SearchQuery(BaseQuery, SearchQueryMixin):
+    """Special class for enabling search on a table."""
+
+
+db = SQLAlchemy(query_class=SearchQuery)
 make_searchable(db.metadata)
 
 migrate = Migrate(compare_type=True)
