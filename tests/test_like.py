@@ -15,8 +15,8 @@ def test_get_likes(client):
     assert resp.status_code == 401
 
 
-def test_delete_like(client):
-    resp = client.delete('/v1/likes/1')
+def test_delete_like(client, quote):
+    resp = client.delete('/v1/likes/{0.id}'.format(quote))
     assert resp.status_code == 401
 
 
@@ -38,8 +38,8 @@ def test_get_likes_admin(client_admin):
     assert_valid_schema(resp.json, 'quotes.json')
 
 
-def test_delete_like_admin(client_admin):
-    resp = client_admin.delete('/v1/likes/1')
+def test_delete_like_admin(client_admin, quote):
+    resp = client_admin.delete('/v1/likes/{0.id}'.format(quote))
 
     assert resp.status_code == 200
     assert_valid_schema(resp.json, 'quote.json')
