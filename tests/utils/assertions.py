@@ -1,8 +1,13 @@
-import json
 from os.path import join, dirname
 
 import jsonref
 from jsonschema import validate
+
+
+def assert_valid_response_data(data, response):
+    json = response.json
+    for key, value in data.items():
+        assert json['data'][key] == value
 
 
 def assert_valid_schema(data, schema_file):

@@ -1,4 +1,7 @@
-from .utils.assertions import assert_valid_schema
+from .utils.assertions import (
+    assert_valid_response_data,
+    assert_valid_schema,
+)
 
 
 def test_get_quotes(client):
@@ -61,6 +64,7 @@ def test_create_quote_admin(client_admin):
     resp = client_admin.post('/v1/quotes', data=post_data)
 
     assert resp.status_code == 201
+    assert_valid_response_data(post_data, resp)
     assert_valid_schema(resp.json, 'quote.json')
 
 
@@ -73,6 +77,7 @@ def test_update_quote_admin(client_admin):
     resp = client_admin.patch('/v1/quotes/1', data=post_data)
 
     assert resp.status_code == 200
+    assert_valid_response_data(post_data, resp)
     assert_valid_schema(resp.json, 'quote.json')
 
 
