@@ -85,6 +85,9 @@ def get_quote_random(user_id=None):
         .order_by(func.random()).first()
     )
 
+    if result is None:
+        return None
+
     quote, is_liked = result
     return _set_attributes(quote, is_liked=is_liked)
 

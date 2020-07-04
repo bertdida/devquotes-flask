@@ -108,4 +108,8 @@ class Random(Resource):
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
-        return db_client.get_quote_random(user_id)
+        quote = db_client.get_quote_random(user_id)
+        if quote is None:
+            abort(404)
+
+        return quote
