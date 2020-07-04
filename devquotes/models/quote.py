@@ -1,8 +1,6 @@
 from datetime import datetime
 
-from flask_sqlalchemy import BaseQuery
 from sqlalchemy_utils.types import TSVectorType
-from sqlalchemy_searchable import SearchQueryMixin
 
 from . import db
 from .mixins import BaseMixin
@@ -10,14 +8,9 @@ from .mixins import BaseMixin
 utcnow = datetime.utcnow
 
 
-class QuoteQuery(BaseQuery, BaseMixin, SearchQueryMixin):
-    pass
-
-
-class Quote(db.Model):
+class Quote(db.Model, BaseMixin):
     """ Model for storing quotes """
 
-    query_class = QuoteQuery
     __tablename__ = 'quote'
 
     id = db.Column(db.Integer, primary_key=True)
