@@ -30,6 +30,17 @@ def test_get_quote_random(client):
     assert_valid_schema(resp.json, 'quote.json')
 
 
+def test_search_quote(client, quote):
+    resp = client.get('/v1/quotes/?={0.author}'.format(quote))
+    assert resp.status_code == 200
+
+    json = resp.json
+    first_result = json['data'][0]['data']
+
+    assert first_result['id'] == quote.id
+    assert_valid_schema(json, 'quotes.json')
+
+
 def test_get_quote_not_found(client):
     resp = client.get('/v1/quotes/2')
     assert resp.status_code == 404
