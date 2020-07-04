@@ -1,8 +1,8 @@
-import pytest
 from contextlib import contextmanager
 
-from flask_jwt_extended import create_access_token, create_refresh_token
+import pytest
 import testing.postgresql as postgresql
+from flask_jwt_extended import create_access_token, create_refresh_token
 
 import config
 from devquotes import create_app
@@ -79,7 +79,7 @@ def db_session_no_expire():
 
 @pytest.fixture(name='quote', scope='module', autouse=True)
 def setup_and_teardown_quote(app, initial_quote_data):
-    with app.app_context():
+    with app.app_context(), db_session_no_expire():
         quote = Quote.create(**initial_quote_data)
 
     yield quote
