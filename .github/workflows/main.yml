@@ -33,6 +33,7 @@ jobs:
         run: |
           pipenv run pytest
         env:
+          SQLALCHEMY_DATABASE_URI: postgres://
           SECRET_KEY: 8b1e007ba2
           JWT_SECRET_KEY: 396eda940e
           ADMINS: ${{ secrets.ADMINS }}
