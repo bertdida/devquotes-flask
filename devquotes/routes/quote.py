@@ -11,6 +11,7 @@ from flask_restful import (
     reqparse,
     Resource,
 )
+from sqlalchemy.exc import IntegrityError
 
 from . import db_client
 from .fields import (
@@ -67,7 +68,11 @@ class Quotes(Resource):
     @jwt_required
     def post(self):
         args = _get_quote_args()
-        return db_client.create_quote(args), 201
+
+        try:
+            return db_client.create_quote(args), 201
+        except IntegrityError:
+            abort(409)
 
 
 class Quote(Resource):
