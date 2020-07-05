@@ -11,7 +11,8 @@ class Config:
     JWT_ERROR_MESSAGE_KEY = 'message'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        os.environ['SQLALCHEMY_DATABASE_URI']
 
     ADMINS = os.environ['ADMINS'].split(',')
     FIREBASE_CREDENTIAL = os.environ['FIREBASE_CREDENTIAL']
