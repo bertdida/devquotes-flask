@@ -11,6 +11,7 @@ from flask_restful import (
     reqparse,
     Resource,
 )
+from sqlalchemy.exc import IntegrityError
 
 from . import db_client
 from .fields import (
@@ -51,15 +52,15 @@ class Quotes(Resource):
         parser.add_argument('per_page', type=int, location='args')
         args = parser.parse_args()
 
-        query = args['q']
+        search_query = args['q']
         page = args['page']
         per_page = args['per_page']
 
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
-        if query:
-            return db_client.search_quotes(query, user_id)
+        if search_query:
+            return db_client.search_quotes(search_query, page, per_page, user_id)
 
         return db_client.get_quotes(page, per_page, user_id)
 
@@ -67,7 +68,11 @@ class Quotes(Resource):
     @jwt_required
     def post(self):
         args = _get_quote_args()
-        return db_client.create_quote(args), 201
+
+        try:
+            return db_client.create_quote(args), 201
+        except IntegrityError:
+            abort(409)
 
 
 class Quote(Resource):
@@ -108,4 +113,8 @@ class Random(Resource):
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
-        return db_client.get_quote_random(user_id)
+        quote = db_client.get_quote_random(user_id)
+        if quote is None:
+            abort(404)
+
+        return quote

@@ -1,18 +1,69 @@
-import pytest
 from contextlib import contextmanager
 
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-)
+import pytest
+import testing.postgresql as postgresql
+from flask_jwt_extended import create_access_token, create_refresh_token
 
+import config
 from devquotes import create_app
 from devquotes.models import db
 from devquotes.models.quote import Quote
 from devquotes.models.user import User
 
-MOCK_FIREBASE_USER_ID = 'firebaseuserid'
-MOCK_FIREBASE_JWT = 'firebasejwt'
+INITIAL_ADMIN_DATA = {
+    'firebase_user_id': 'firebaseuserid',
+    'firebase_jwt': 'firebasejwt',
+    'is_admin': True,
+}
+
+INITIAL_QUOTE_DATA = {
+    'author': 'Linus Torvalds',
+    'quotation': 'Talk is cheap. Show me the code.',
+    'source': 'https://lkml.org/lkml/2000/8/25/132',
+}
+
+
+@pytest.fixture(name='initial_admin_data', scope='session')
+def setup_and_teardown_initial_admin_data():
+    return INITIAL_ADMIN_DATA
+
+
+@pytest.fixture(name='initial_quote_data', scope='session')
+def setup_and_teardown_initial_quote_data():
+    return INITIAL_QUOTE_DATA
+
+
+@pytest.fixture(name='postgres', scope='session')
+def setup_and_teardown_postgres():
+    Postgresql = postgresql.PostgresqlFactory(cache_initialized_db=True)
+
+    postgres = Postgresql()
+    yield postgres
+
+    postgres.stop()
+    Postgresql.clear_cache()
+
+
+@pytest.fixture(name='app', scope='session')
+def setup_and_teardown_app(postgres):
+    class TestingConfig(config.Testing):
+        SQLALCHEMY_DATABASE_URI = postgres.url()
+
+    return create_app(TestingConfig)
+
+
+@pytest.fixture(name='database', scope='module', autouse=True)
+def setup_and_teardown_database(app):
+    with app.app_context():
+        db.create_all()
+
+    yield db
+    db.drop_all()
+
+
+@pytest.fixture(name='client', scope='session')
+def setup_and_teardown_client(app):
+    return app.test_client()
 
 
 @contextmanager
@@ -26,67 +77,33 @@ def db_session_no_expire():
         session.expire_on_commit = True
 
 
-@pytest.fixture(name='app', scope='package')
-def setup_and_teardown_app():
-    app = create_app('config.Testing')
-
-    with app.app_context():
-        db.create_all()
-
-    yield app
-    db.drop_all()
-
-
-@pytest.fixture(name='client', scope='module')
-def setup_and_teardown_client(app):
-    return app.test_client()
-
-
 @pytest.fixture(name='quote', scope='module', autouse=True)
-def setup_and_teardown_quote(app):
-    data = {
-        'author': 'Linus Torvalds',
-        'quotation': 'Talk is cheap. Show me the code.',
-        'source': 'https://lkml.org/lkml/2000/8/25/132',
-    }
-
-    with app.app_context():
-        quote = Quote.create(**data)
+def setup_and_teardown_quote(app, initial_quote_data):
+    with app.app_context(), db_session_no_expire():
+        quote = Quote.create(**initial_quote_data)
 
     yield quote
     quote.delete()
 
 
-@pytest.fixture(name='firebase_user_id', scope='module')
-def setup_and_teardown_firebase_user_id():
-    return MOCK_FIREBASE_USER_ID
-
-
-@pytest.fixture(name='admin_user', scope='module', autouse=True)
-def setup_and_teardown_firebase_admin_user(app, firebase_user_id):
-    data = {
-        'firebase_user_id': firebase_user_id,
-        'is_admin': True,
-    }
+@pytest.fixture(name='user_admin', scope='module', autouse=True)
+def setup_and_teardown_user_admin(app, initial_admin_data):
+    admin_data_copy = dict(initial_admin_data)
+    admin_data_copy.pop('firebase_jwt')
 
     with app.app_context(), db_session_no_expire():
-        user = User.create(**data)
+        user = User.create(**admin_data_copy)
 
     yield user
     user.delete()
 
 
-@pytest.fixture(name='firebase_jwt')
-def setup_and_teardown_firebase_jwt():
-    return MOCK_FIREBASE_JWT
-
-
 @pytest.fixture(name='client_admin', scope='module')
-def setup_and_teardown_client_admin(app, client, admin_user):
+def setup_and_teardown_client_admin(client, user_admin):
     identity = {
-        'firebase_user_id': admin_user.firebase_user_id,
-        'is_admin': admin_user.is_admin,
-        'id': admin_user.id,
+        'firebase_user_id': user_admin.firebase_user_id,
+        'is_admin': user_admin.is_admin,
+        'id': user_admin.id,
     }
 
     access_token = create_access_token(identity)

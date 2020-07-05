@@ -25,6 +25,7 @@ def make_shell_context():
 
 @app.before_first_request
 def create_database_tables():
+    db.configure_mappers()
     db.create_all()
 
 
