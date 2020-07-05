@@ -32,12 +32,13 @@ def test_get_quote_random(client):
 
 def test_search_quote(client, quote):
     resp = client.get('/v1/quotes/?={0.author}'.format(quote))
+
     assert resp.status_code == 200
 
     json = resp.json
-    first_result = json['data'][0]['data']
+    results = resp.json['data']
 
-    assert first_result['id'] == quote.id
+    assert any(result['data']['id'] == quote.id for result in results)
     assert_valid_schema(json, 'quotes.json')
 
 
