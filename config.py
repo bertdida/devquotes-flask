@@ -28,6 +28,12 @@ class Production(Config):
     ENV = 'production'
     DEBUG = False
 
+    # workaround for ExpiredSignatureError raising
+    # 500 status code instead of 401
+    # https://github.com/vimalloc/flask-jwt-extended/issues/20
+    # https://github.com/vimalloc/flask-jwt-extended/issues/86
+    PROPAGATE_EXCEPTIONS = True
+
 
 class Testing(Config):
     TESTING = True
