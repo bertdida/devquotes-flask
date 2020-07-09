@@ -22,6 +22,8 @@ class Development(Config):
     ENV = 'development'
     DEBUG = True
     SQLALCHEMY_ECHO = True
+    JWT_COOKIE_SECURE = False
+    JWT_ACCESS_TOKEN_EXPIRES = 10  # seconds
 
 
 class Production(Config):
