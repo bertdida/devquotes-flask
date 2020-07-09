@@ -17,6 +17,8 @@ class Config:
     ADMINS = os.environ['ADMINS'].split(',')
     FIREBASE_CREDENTIAL = os.environ['FIREBASE_CREDENTIAL']
 
+    ALLOWED_ORIGINS = os.environ['ALLOWED_ORIGINS'].split(',')
+
 
 class Development(Config):
     ENV = 'development'
