@@ -23,6 +23,8 @@ class Config:
 class Development(Config):
     ENV = 'development'
     DEBUG = True
+    SERVER_NAME = os.environ.get('SERVER_NAME')
+
     SQLALCHEMY_ECHO = True
     JWT_COOKIE_SECURE = False
     JWT_ACCESS_TOKEN_EXPIRES = 10  # seconds
