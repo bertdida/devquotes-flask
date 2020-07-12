@@ -52,4 +52,16 @@ def seed(filename):
 
 
 if __name__ == '__main__':
-    app.run()
+    in_dev = app.config.get('ENV') == 'development'
+    server_name = app.config.get('SERVER_NAME')
+
+    ssl_context = None
+    if in_dev and server_name:
+        host_name = server_name.split(':')[0]
+        cert_file = './ssl/{}.pem'.format(host_name)
+        pkey_file = './ssl/{}-key.pem'.format(host_name)
+
+        if os.path.isfile(cert_file) and os.path.isfile(pkey_file):
+            ssl_context = (cert_file, pkey_file)
+
+    app.run(ssl_context=ssl_context)
