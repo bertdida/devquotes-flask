@@ -69,6 +69,9 @@ class Quotes(Resource):
     def post(self):
         args = _get_quote_args()
 
+        current_user = get_jwt_identity()
+        args['is_published'] = current_user['is_admin']
+
         try:
             return db_client.create_quote(args), 201
         except IntegrityError:
