@@ -21,6 +21,7 @@ class Quote(db.Model, BaseMixin):
     likes = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, default=utcnow)
     updated_at = db.Column(db.DateTime, default=utcnow, onupdate=utcnow)
+    is_published = db.Column(db.Boolean, default=False, index=True)
     search_vector = db.Column(
         TSVectorType(
             'quotation', 'author',
