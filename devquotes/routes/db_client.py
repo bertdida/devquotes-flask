@@ -32,6 +32,7 @@ def get_quotes(page, per_page, user_id=None):
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
+        .filter(Quote.is_published)
         .order_by(Quote.created_at.desc())
     )
 
@@ -43,6 +44,7 @@ def search_quotes(search_query, page, per_page, user_id=None):
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
+        .filter(Quote.is_published)
         .search(search_query, sort=True)
     )
 
@@ -54,7 +56,7 @@ def get_user_liked_quotes(page, per_page, user_id=None):
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
         .join(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.likes > 0)
+        .filter(Quote.likes > 0, Quote.is_published)
         .order_by(Like.created_at.desc())
     )
 
@@ -66,7 +68,7 @@ def get_quote_or_404(quote_id, user_id=None):
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.id == quote_id)
+        .filter(Quote.id == quote_id, Quote.is_published)
         .first()
     )
 
@@ -82,6 +84,7 @@ def get_quote_random(user_id=None):
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
+        .filter(Quote.is_published)
         .order_by(func.random()).first()
     )
 
