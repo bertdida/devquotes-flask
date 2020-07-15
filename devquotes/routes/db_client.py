@@ -79,7 +79,7 @@ def get_quote_or_404(quote_id, user_id=None):
     return _set_attributes(quote, is_liked=is_liked)
 
 
-def get_quote_random(user_id=None):
+def get_random_quote(user_id=None):
     result = (
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
