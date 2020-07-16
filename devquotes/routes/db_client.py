@@ -27,12 +27,12 @@ def _paginate_quote(query, page, per_page):
     return result
 
 
-def get_quotes(page, per_page, user_id=None):
+def get_quotes(page, per_page, user_id=None, is_published=True):
     query = (
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.is_published)
+        .filter(Quote.is_published == is_published)
         .order_by(Quote.created_at.desc())
     )
 

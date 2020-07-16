@@ -7,6 +7,7 @@ from flask_jwt_extended import (
 )
 from flask_restful import (
     abort,
+    inputs,
     marshal_with,
     reqparse,
     Resource,
@@ -50,11 +51,13 @@ class Quotes(Resource):
         parser.add_argument('q', type=str, location='args')
         parser.add_argument('page', type=int, location='args')
         parser.add_argument('per_page', type=int, location='args')
+        parser.add_argument('is_published', type=inputs.boolean, location='args', default=True)  # noqa
         args = parser.parse_args()
 
         search_query = args['q']
         page = args['page']
         per_page = args['per_page']
+        is_published = args['is_published']
 
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
@@ -62,7 +65,7 @@ class Quotes(Resource):
         if search_query:
             return db_client.search_quotes(search_query, page, per_page, user_id)
 
-        return db_client.get_quotes(page, per_page, user_id)
+        return db_client.get_quotes(page, per_page, user_id, is_published)
 
     @marshal_with(quote_fields)
     @jwt_required
