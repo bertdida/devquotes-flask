@@ -24,6 +24,7 @@ quote_fields = {
         'source': fields.String,
         'likes': fields.Integer,
         'is_liked': fields.Boolean(attribute='is_liked', default=False),
+        'is_published': fields.Boolean(attribute='is_published', default=False),
         'created_at': fields.DateTime(dt_format='iso8601'),
         'updated_at': fields.DateTime(dt_format='iso8601'),
     }
