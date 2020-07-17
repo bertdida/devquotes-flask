@@ -72,7 +72,7 @@ def get_quote_or_404(quote_id, user_id=None):
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.id == quote_id, Quote.is_published)
+        .filter(Quote.id == quote_id)
         .first()
     )
 
