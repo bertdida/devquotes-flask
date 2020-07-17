@@ -1,9 +1,9 @@
 from .utils.assertions import assert_valid_schema
 
 
-def test_create_like(client):
+def test_like(client, quote):
     post_data = {
-        'id': 1
+        'id': quote.id
     }
 
     resp = client.post('/v1/likes', data=post_data)
@@ -15,14 +15,14 @@ def test_get_likes(client):
     assert resp.status_code == 401
 
 
-def test_delete_like(client, quote):
+def test_unlike(client, quote):
     resp = client.delete('/v1/likes/{0.id}'.format(quote))
     assert resp.status_code == 401
 
 
-def test_create_like_admin(client_admin):
+def test_like_admin(client_admin, quote):
     post_data = {
-        'id': 1
+        'id': quote.id
     }
 
     resp = client_admin.post('/v1/likes', data=post_data)
@@ -38,7 +38,7 @@ def test_get_likes_admin(client_admin):
     assert_valid_schema(resp.json, 'quotes.json')
 
 
-def test_delete_like_admin(client_admin, quote):
+def test_unlike_admin(client_admin, quote):
     resp = client_admin.delete('/v1/likes/{0.id}'.format(quote))
 
     assert resp.status_code == 200
