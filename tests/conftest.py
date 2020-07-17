@@ -20,6 +20,7 @@ INITIAL_QUOTE_DATA = {
     'author': 'Linus Torvalds',
     'quotation': 'Talk is cheap. Show me the code.',
     'source': 'https://lkml.org/lkml/2000/8/25/132',
+    'is_published': True,
 }
 
 
