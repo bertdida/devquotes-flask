@@ -1,6 +1,6 @@
 from flask import current_app
 from flask_restful import abort
-from sqlalchemy import case
+from sqlalchemy import case, or_
 from sqlalchemy.sql.expression import func
 
 from devquotes.models.like import Like
@@ -28,11 +28,15 @@ def _paginate_quote(query, page, per_page):
 
 
 def get_quotes(page, per_page, user_id=None, is_published=True):
+    is_published_query = [Quote.is_published == is_published]
+    if not is_published:
+        is_published_query.append(Quote.is_published.is_(None))
+
     query = (
         Quote.query
         .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.is_published == is_published)
+        .filter(or_(*is_published_query))
         .order_by(Quote.created_at.desc())
     )
 
