@@ -16,12 +16,18 @@ INITIAL_ADMIN_DATA = {
     'is_admin': True,
 }
 
-INITIAL_QUOTE_DATA = {
-    'author': 'Linus Torvalds',
-    'quotation': 'Talk is cheap. Show me the code.',
-    'source': 'https://lkml.org/lkml/2000/8/25/132',
-    'is_published': True,
-}
+INITIAL_QUOTES_DATA = [
+    {
+        'author': 'Linus Torvalds',
+        'quotation': 'Talk is cheap. Show me the code.',
+        'source': 'https://lkml.org/lkml/2000/8/25/132',
+        'is_published': True,
+    },
+    {
+        'author': 'Tim Kadlec',
+        'quotation': 'Blame the implementation, not the technique.',
+    }
+]
 
 
 @pytest.fixture(name='initial_admin_data', scope='session')
@@ -29,9 +35,9 @@ def setup_and_teardown_initial_admin_data():
     return INITIAL_ADMIN_DATA
 
 
-@pytest.fixture(name='initial_quote_data', scope='session')
-def setup_and_teardown_initial_quote_data():
-    return INITIAL_QUOTE_DATA
+@pytest.fixture(name='initial_quotes_data', scope='session')
+def setup_and_teardown_initial_quotes_data():
+    return INITIAL_QUOTES_DATA
 
 
 @pytest.fixture(name='postgres', scope='session')
@@ -78,13 +84,21 @@ def db_session_no_expire():
         session.expire_on_commit = True
 
 
-@pytest.fixture(name='quote', scope='module', autouse=True)
-def setup_and_teardown_quote(app, initial_quote_data):
+@pytest.fixture(name='quotes', scope='module', autouse=True)
+def setup_and_teardown_quotes(app, initial_quotes_data):
     with app.app_context(), db_session_no_expire():
-        quote = Quote.create(**initial_quote_data)
+        for data in initial_quotes_data:
+            Quote.create(**data)
 
-    yield quote
-    quote.delete()
+    yield Quote.query.all()
+
+    Quote.query.delete()
+    db.session.commit()
+
+
+@pytest.fixture(name='quote', scope='module')
+def setup_and_teardown_quote():
+    return Quote.query.first()
 
 
 @pytest.fixture(name='user_admin', scope='module', autouse=True)
