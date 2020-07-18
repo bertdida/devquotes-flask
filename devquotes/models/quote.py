@@ -22,9 +22,9 @@ class Quote(db.Model, BaseMixin):
     created_at = db.Column(db.DateTime, default=utcnow)
     updated_at = db.Column(db.DateTime, default=utcnow, onupdate=utcnow)
     is_published = db.Column(db.Boolean, default=False, index=True)
-    search_vector = db.Column(
+    search_vector = db.deferred(db.Column(
         TSVectorType(
             'quotation', 'author',
             weights={'quotation': 'A', 'author': 'B'}
         )
-    )
+    ))
