@@ -73,6 +73,7 @@ class Quotes(Resource):
         args = _get_quote_args()
 
         current_user = get_jwt_identity()
+        args['contributor_id'] = current_user['id']
         args['is_published'] = current_user['is_admin']
 
         try:
