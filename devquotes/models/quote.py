@@ -28,3 +28,5 @@ class Quote(db.Model, BaseMixin):
             weights={'quotation': 'A', 'author': 'B'}
         )
     ))
+
+    contributor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
