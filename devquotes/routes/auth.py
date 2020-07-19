@@ -49,7 +49,9 @@ class Token(Resource):
         if not user:
             user = db_client.create_user({
                 'firebase_user_id': firebase_user['user_id'],
-                'is_admin': firebase_user['email'] in current_app.config['ADMINS']
+                'is_admin': firebase_user['email'] in current_app.config['ADMINS'],
+                'name': firebase_user['name'],
+                'picture_url': firebase_user['picture'],
             })
 
         identity = {
