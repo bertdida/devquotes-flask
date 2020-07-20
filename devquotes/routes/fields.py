@@ -12,6 +12,8 @@ class PaginationUrl(fields.Raw):
 
 user_fields = {
     'data': {
+        'name': fields.String,
+        'picture_url': fields.String,
         'is_admin': fields.Boolean,
     }
 }
@@ -23,8 +25,9 @@ quote_fields = {
         'quotation': fields.String,
         'source': fields.String,
         'likes': fields.Integer,
-        'is_liked': fields.Boolean(attribute='is_liked', default=False),
-        'is_published': fields.Boolean(attribute='is_published', default=False),
+        'is_liked': fields.Boolean(default=False),
+        'is_published': fields.Boolean(default=False),
+        'contributor_id': fields.Integer,
         'created_at': fields.DateTime(dt_format='iso8601'),
         'updated_at': fields.DateTime(dt_format='iso8601'),
     }
