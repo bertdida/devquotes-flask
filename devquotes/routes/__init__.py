@@ -28,6 +28,7 @@ def init_app(app):
     from .auth import Token, TokenRevoke, TokenRefresh
     from .quote import Quotes, Quote, Random as RandomQuote
     from .likes import Likes, Like
+    from .user import User
 
     api.init_app(bp)
     api.add_resource(Token, '/auth/token')
@@ -38,5 +39,6 @@ def init_app(app):
     api.add_resource(RandomQuote, '/quotes/random')
     api.add_resource(Likes, '/likes')
     api.add_resource(Like, '/likes/<int:quote_id>')
+    api.add_resource(User, '/users/<int:user_id>')
 
     app.register_blueprint(bp, url_prefix='/v1')

@@ -142,3 +142,12 @@ def get_user(firebase_user_id):
 
 def create_user(data):
     return User.create(**data)
+
+
+def get_user_or_404(user_id):
+    result = User.get_by(first=True, id=user_id)
+
+    if result is None:
+        abort(404)
+
+    return result
