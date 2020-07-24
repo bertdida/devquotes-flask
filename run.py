@@ -2,7 +2,7 @@ import json
 import os
 
 import click
-from sqlalchemy.exc import DataError
+from sqlalchemy.exc import DataError, IntegrityError
 
 from devquotes import create_app
 from devquotes.models import db
@@ -47,7 +47,7 @@ def seed(filename):
     for data in quotes:
         try:
             Quote.create(**data)
-        except DataError:
+        except (DataError, IntegrityError):
             pass
 
 
