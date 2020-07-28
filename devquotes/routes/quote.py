@@ -22,6 +22,7 @@ def _get_quote_args():
     parser.add_argument('author', type=str, required=True, nullable=False)
     parser.add_argument('quotation', type=str, required=True, nullable=False)
     parser.add_argument('source', type=str)
+    parser.add_argument('is_published', type=inputs.boolean)
 
     return parser.parse_args()
 
