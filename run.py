@@ -8,7 +8,7 @@ from devquotes import create_app
 from devquotes.models import db
 from devquotes.models.like import Like  # pylint: disable=unused-import
 from devquotes.models.quote import Quote  # pylint: disable=unused-import
-from devquotes.models.quote_type import QuoteType  # pylint: disable=unused-import
+from devquotes.models.quote_status import QuoteStatus  # pylint: disable=unused-import
 from devquotes.models.user import User  # pylint: disable=unused-import
 
 app = create_app(config_class=os.environ['CONFIG_CLASS'])
@@ -20,7 +20,7 @@ def make_shell_context():
         'db': db,
         'User': User,
         'Quote': Quote,
-        'QuoteType': QuoteType,
+        'QuoteStatus': QuoteStatus,
         'Like': Like,
     }
 

@@ -20,8 +20,8 @@ class Quote(db.Model, BaseMixin):
     contributor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # noqa
     contributor = db.relationship('User', back_populates='contributed_quotes')
 
-    type_id = db.Column(db.Integer, db.ForeignKey('quote_type.id'), nullable=False)  # noqa
-    type = db.relationship('QuoteType', back_populates='quotes')
+    status_id = db.Column(db.Integer, db.ForeignKey('quote_status.id'), nullable=False)  # noqa
+    status = db.relationship('QuoteStatus', back_populates='quotes')
 
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=utcnow, onupdate=utcnow)  # noqa
