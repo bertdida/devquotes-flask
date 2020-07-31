@@ -5,10 +5,10 @@ from .mixins import BaseMixin
 class User(BaseMixin, db.Model):
     __tablename__ = 'user'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     firebase_user_id = db.Column(db.String, nullable=False, unique=True)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-    name = db.Column(db.String, nullable=True)
+    name = db.Column(db.String, nullable=False)
     picture_url = db.Column(db.String, nullable=True)
 
-    contributed_quotes = db.relationship('Quote', backref='contributor', lazy='dynamic')  # noqa
+    contributed_quotes = db.relationship('Quote', back_populates='contributor')
