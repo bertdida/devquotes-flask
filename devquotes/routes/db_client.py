@@ -1,6 +1,6 @@
 from flask import current_app
 from flask_restful import abort
-from sqlalchemy import case, or_
+from sqlalchemy import and_, case, event, or_
 from sqlalchemy.sql.expression import func
 
 from devquotes.models.like import Like
@@ -151,3 +151,23 @@ def get_user_or_404(user_id):
         abort(404)
 
     return result
+
+
+@event.listens_for(Like, 'after_insert')
+def increment_quote_likes(_, connection, target):
+    quote_table = Quote.__table__
+    connection.execute(
+        quote_table
+        .update(Quote.id == target.quote_id)
+        .values(likes=Quote.likes + 1)
+    )
+
+
+@event.listens_for(Like, 'after_delete')
+def decrement_quote_likes(_, connection, target):
+    quote_table = Quote.__table__
+    connection.execute(
+        quote_table
+        .update(and_(Quote.id == target.quote_id, Quote.likes > 0))
+        .values(likes=Quote.likes - 1)
+    )
