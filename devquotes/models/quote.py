@@ -9,24 +9,27 @@ utcnow = datetime.utcnow
 
 
 class Quote(db.Model, BaseMixin):
-    """ Model for storing quotes """
-
     __tablename__ = 'quote'
-    __table_args__ = (db.UniqueConstraint('author', 'quotation'),)
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     author = db.Column(db.String(100), nullable=False)
     quotation = db.Column(db.String(200), nullable=False)
     source = db.Column(db.String, nullable=True)
     likes = db.Column(db.Integer, nullable=False, default=0)
-    created_at = db.Column(db.DateTime, default=utcnow)
-    updated_at = db.Column(db.DateTime, default=utcnow, onupdate=utcnow)
-    is_published = db.Column(db.Boolean, default=False, index=True)
+
+    contributor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # noqa
+    contributor = db.relationship('User', back_populates='contributed_quotes')
+
+    type_id = db.Column(db.Integer, db.ForeignKey('quote_type.id'), nullable=False)  # noqa
+    type = db.relationship('QuoteType', back_populates='quotes')
+
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=utcnow, onupdate=utcnow)  # noqa
+
     search_vector = db.deferred(db.Column(
         TSVectorType(
             'quotation', 'author',
             weights={'quotation': 'A', 'author': 'B'}
-        )
+        ),
+        nullable=False
     ))
-
-    contributor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
