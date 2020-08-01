@@ -10,6 +10,11 @@ class PaginationUrl(fields.Raw):
         return '{}?page={}'.format(request.path, value)
 
 
+class Status(fields.Raw):
+    def format(self, value):
+        return value.name
+
+
 user_fields = {
     'data': {
         'name': fields.String,
@@ -26,8 +31,7 @@ quote_fields = {
         'source': fields.String,
         'likes': fields.Integer,
         'is_liked': fields.Boolean(default=False),
-        'is_published': fields.Boolean(default=False),
-        'contributor_id': fields.Integer,
+        'status': Status,
         'created_at': fields.DateTime(dt_format='iso8601'),
         'updated_at': fields.DateTime(dt_format='iso8601'),
     }
