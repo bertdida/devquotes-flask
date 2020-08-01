@@ -1,14 +1,14 @@
 from unittest import mock
 
 
-def test_token(client, initial_admin_data):
+def test_token(client, initial_admin):
     with mock.patch('devquotes.routes.auth.auth.verify_id_token') as magic_mock:
         magic_mock.return_value = {
-            'user_id': initial_admin_data['firebase_user_id'],
+            'user_id': initial_admin['firebase_user_id'],
         }
 
         post_data = {
-            'token': initial_admin_data['firebase_jwt']
+            'token': initial_admin['firebase_jwt']
         }
 
         resp = client.post('/v1/auth/token', data=post_data)
