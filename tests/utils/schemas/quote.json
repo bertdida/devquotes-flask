@@ -12,7 +12,7 @@
         "source",
         "likes",
         "is_liked",
-        "is_published",
+        "status",
         "created_at",
         "updated_at"
       ],
@@ -35,8 +35,8 @@
         "is_liked": {
           "type": "boolean"
         },
-        "is_published": {
-          "type": "boolean"
+        "status": {
+          "type": "string"
         },
         "created_at": {
           "type": "string"
