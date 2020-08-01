@@ -26,15 +26,21 @@ def test_authorized_like(client_admin, quote):
     }
 
     resp = client_admin.post('/v1/likes', data=post_data)
+    resp_json = resp.json
+    resp_data = resp_json['data']
 
     assert resp.status_code == 200
+    assert resp_data['likes'] == 1
     assert_valid_schema(resp.json, 'quote.json')
 
 
 def test_authorized_unlike(client_admin, quote):
     resp = client_admin.delete('/v1/likes/{0.id}'.format(quote))
+    resp_json = resp.json
+    resp_data = resp_json['data']
 
     assert resp.status_code == 200
+    assert resp_data['likes'] == 0
     assert_valid_schema(resp.json, 'quote.json')
 
 
