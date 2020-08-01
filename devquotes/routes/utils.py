@@ -3,6 +3,8 @@ from functools import wraps
 from flask_jwt_extended import get_jwt_identity
 from flask_restful import abort
 
+from . import db_client
+
 
 def admin_only(func):
     @wraps(func)
@@ -14,3 +16,11 @@ def admin_only(func):
         return func(args, **kwargs)
 
     return wrapper
+
+
+def get_quote_or_404(quote_id, user_id):
+    quote = db_client.get_quote(quote_id, user_id)
+    if quote is None:
+        abort(404)
+
+    return quote
