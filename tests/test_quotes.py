@@ -6,27 +6,24 @@ from .utils.assertions import (
 NEW_QUOTE = {
     'author': 'Austin Freeman',
     'quotation': 'Simplicity is the soul of efficiency.',
+    'status': 'published',
 }
 
 
-def test_get_quotes(client):
-    resp = client.get('/v1/quotes')
-    resp_json = resp.json
-    resp_data = resp_json['data']
+def test_get_quotes(client, quote_statuses):
+    for status in quote_statuses:
+        status_name = status.name
 
-    assert resp.status_code == 200
-    assert all(quote['data']['is_published'] for quote in resp_data)
-    assert_valid_schema(resp_json, 'quotes.json')
+        resp = client.get('/v1/quotes?status={}'.format(status_name))
+        resp_json = resp.json
+        resp_data = resp_json['data']
 
+        def has_expected_status(quote):
+            return quote['data']['status'] == status_name  # pylint: disable=cell-var-from-loop
 
-def test_get_unpublished_quotes(client):
-    resp = client.get('/v1/quotes?is_published=false')
-    resp_json = resp.json
-    resp_data = resp_json['data']
-
-    assert resp.status_code == 200
-    assert all(not quote['data']['is_published'] for quote in resp_data)
-    assert_valid_schema(resp_json, 'quotes.json')
+        assert resp.status_code == 200
+        assert all(has_expected_status(quote) for quote in resp_data)
+        assert_valid_schema(resp_json, 'quotes.json')
 
 
 def test_get_quote(client, quote):
@@ -49,7 +46,7 @@ def test_get_quote_not_found(client):
 
 
 def test_search_quote(client, quote):
-    resp = client.get('/v1/quotes/?={0.author}'.format(quote))
+    resp = client.get('/v1/quotes/?q={0.author}'.format(quote))
     resp_json = resp.json
     resp_data = resp_json['data']
 
