@@ -13,5 +13,5 @@ class Like(BaseMixin, db.Model):
     )
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    quote_id = db.Column(db.Integer, db.ForeignKey('quote.id'), nullable=False)
+    quote_id = db.Column(db.Integer, db.ForeignKey('quote.id', ondelete='CASCADE'), nullable=False)  # noqa
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
