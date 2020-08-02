@@ -17,6 +17,7 @@ class Status(fields.Raw):
 
 user_fields = {
     'data': {
+        'id': fields.Integer,
         'name': fields.String,
         'picture_url': fields.String,
         'is_admin': fields.Boolean,
