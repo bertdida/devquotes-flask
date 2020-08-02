@@ -151,7 +151,9 @@ def setup_and_teardown_quote():
 
 
 @pytest.fixture(name='client_admin', scope='module')
-def setup_and_teardown_client_admin(client, user_admin):
+def setup_and_teardown_client_admin(app, user_admin):
+    client = app.test_client()
+
     identity = {
         'firebase_user_id': user_admin.firebase_user_id,
         'is_admin': user_admin.is_admin,
