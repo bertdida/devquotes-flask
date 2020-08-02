@@ -1,5 +1,5 @@
 from flask_jwt_extended import jwt_required
-from flask_restful import marshal_with, Resource
+from flask_restful import abort, marshal_with, Resource
 
 from . import db_client
 from .fields import user_fields
@@ -12,4 +12,8 @@ class User(Resource):
     @jwt_required
     @admin_only
     def get(self, user_id):
-        return db_client.get_user_or_404(user_id)
+        user = db_client.get_user_by_id(user_id)
+        if user is None:
+            abort(404)
+
+        return user
