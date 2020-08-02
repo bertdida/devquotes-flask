@@ -12,6 +12,7 @@ from sqlalchemy.exc import IntegrityError
 
 from . import db_client
 from .fields import quote_fields, quotes_fields
+from .utils import get_quote_or_404
 
 
 class Likes(Resource):
@@ -29,6 +30,7 @@ class Likes(Resource):
         current_user = get_jwt_identity()
         return db_client.get_user_liked_quotes(page, per_page, current_user['id'])
 
+    @marshal_with(quote_fields)
     @jwt_required
     def post(self):
         parser = reqparse.RequestParser()
@@ -36,7 +38,7 @@ class Likes(Resource):
         args = parser.parse_args()
 
         current_user = get_jwt_identity()
-        quote = db_client.get_quote_or_404(args['id'], current_user['id'])
+        quote = get_quote_or_404(args['id'], current_user['id'])
 
         try:
             db_client.create_like({
@@ -46,18 +48,16 @@ class Likes(Resource):
         except IntegrityError:
             return {'success': False}
 
-        return marshal(
-            db_client.like_quote(quote),
-            quote_fields
-        )
+        return quote
 
 
 class Like(Resource):
 
+    @marshal_with(quote_fields)
     @jwt_required
     def delete(self, quote_id):
         current_user = get_jwt_identity()
-        quote = db_client.get_quote_or_404(quote_id, current_user['id'])
+        quote = get_quote_or_404(quote_id, current_user['id'])
 
         try:
             like = db_client.get_like(current_user['id'], quote.id)
@@ -65,7 +65,4 @@ class Like(Resource):
         except AttributeError:
             return {'success': False}
 
-        return marshal(
-            db_client.unlike_quote(quote),
-            quote_fields
-        )
+        return quote
