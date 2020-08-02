@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User response schema",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["id", "name", "is_admin", "picture_url"],
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "is_admin": {
+          "type": "boolean"
+        },
+        "picture_url": {
+          "type": ["null", "string"]
+        }
+      }
+    }
+  }
+}
