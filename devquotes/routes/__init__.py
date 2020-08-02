@@ -26,7 +26,7 @@ def init_app(app):
     firebase_admin.initialize_app(credential=credential)
 
     from .auth import Token, TokenRevoke, TokenRefresh
-    from .quote import Quotes, Quote, Random as RandomQuote
+    from .quote import Quotes, Quote, Random as RandomQuote, Contributor
     from .likes import Likes, Like
     from .user import User
 
@@ -40,5 +40,6 @@ def init_app(app):
     api.add_resource(Likes, '/likes')
     api.add_resource(Like, '/likes/<int:quote_id>')
     api.add_resource(User, '/users/<int:user_id>')
+    api.add_resource(Contributor, '/quotes/<int:quote_id>/contributor')
 
     app.register_blueprint(bp, url_prefix='/v1')
