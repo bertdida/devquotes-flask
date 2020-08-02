@@ -47,6 +47,7 @@ class Likes(Resource):
         except IntegrityError:
             return {'success': False}
 
+        quote.is_liked = True
         return quote
 
 
@@ -64,4 +65,5 @@ class Like(Resource):
         except AttributeError:
             return {'success': False}
 
+        quote.is_liked = False
         return quote
