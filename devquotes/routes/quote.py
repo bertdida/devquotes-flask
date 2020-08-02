@@ -90,7 +90,9 @@ class Quotes(Resource):
         current_user = get_jwt_identity()
         args['contributor_id'] = current_user['id']
 
-        status = args.pop('status', 'pending_review')
+        status_fallback = 'published' if current_user['is_admin'] else 'pending_review'
+        status = args.pop('status', status_fallback)
+
         if status:
             for curr_status in statuses:
                 if curr_status.name == status:
