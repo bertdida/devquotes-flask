@@ -1,11 +1,13 @@
 from flask import current_app
-from flask_restful import abort
-from sqlalchemy import and_, case, event, or_
+from sqlalchemy import and_, case, event
 from sqlalchemy.sql.expression import func
 
 from devquotes.models.like import Like
 from devquotes.models.user import User
 from devquotes.models.quote import Quote
+from devquotes.models.quote_status import QuoteStatus
+
+PUBLISHED_STATUS_NAME = 'published'
 
 
 def _set_attributes(obj, **kwargs):
@@ -27,16 +29,15 @@ def _paginate_quote(query, page, per_page):
     return result
 
 
-def get_quotes(page, per_page, user_id=None, is_published=True):
-    is_published_query = [Quote.is_published == is_published]
-    if not is_published:
-        is_published_query.append(Quote.is_published.is_(None))
+def get_quotes(page, per_page, user_id=None, status=None):
+    status_name = PUBLISHED_STATUS_NAME if status is None else status
 
     query = (
         Quote.query
-        .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
+        .join(QuoteStatus)
+        .filter(QuoteStatus.name == status_name)
+        .add_columns(case([(Like.quote_id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(or_(*is_published_query))
         .order_by(Quote.created_at.desc())
     )
 
@@ -46,9 +47,10 @@ def get_quotes(page, per_page, user_id=None, is_published=True):
 def search_quotes(search_query, page, per_page, user_id=None):
     query = (
         Quote.query
-        .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
+        .join(QuoteStatus)
+        .filter(QuoteStatus.name == PUBLISHED_STATUS_NAME)
+        .add_columns(case([(Like.quote_id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.is_published)
         .search(search_query, sort=True)
     )
 
@@ -58,38 +60,24 @@ def search_quotes(search_query, page, per_page, user_id=None):
 def get_user_liked_quotes(page, per_page, user_id=None):
     query = (
         Quote.query
-        .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
+        .join(QuoteStatus)
+        .filter(QuoteStatus.name == PUBLISHED_STATUS_NAME)
+        .add_columns(case([(Like.quote_id.isnot(None), True)], else_=False).label('is_liked'))
         .join(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.likes > 0, Quote.is_published)
+        .filter(Quote.likes > 0)
         .order_by(Like.created_at.desc())
     )
 
     return _paginate_quote(query, page, per_page)
 
 
-def get_quote_or_404(quote_id, user_id=None):
+def get_quote(quote_id, user_id=None):
     result = (
         Quote.query
-        .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
+        .add_columns(case([(Like.quote_id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
         .filter(Quote.id == quote_id)
         .first()
-    )
-
-    if result is None:
-        abort(404)
-
-    quote, is_liked = result
-    return _set_attributes(quote, is_liked=is_liked)
-
-
-def get_random_quote(user_id=None):
-    result = (
-        Quote.query
-        .add_columns(case([(Like.id.isnot(None), True)], else_=False).label('is_liked'))
-        .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.is_published)
-        .order_by(func.random()).first()
     )
 
     if result is None:
@@ -99,14 +87,22 @@ def get_random_quote(user_id=None):
     return _set_attributes(quote, is_liked=is_liked)
 
 
-def like_quote(quote):
-    updated_quote = update_quote(quote, {'likes': quote.likes + 1})
-    return _set_attributes(updated_quote, is_liked=True)
+def get_random_quote(user_id=None):
+    result = (
+        Quote.query
+        .join(QuoteStatus)
+        .filter(QuoteStatus.name == 'published')
+        .add_columns(case([(Like.quote_id.isnot(None), True)], else_=False).label('is_liked'))
+        .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
+        .order_by(func.random())
+        .first()
+    )
 
+    if result is None:
+        return None
 
-def unlike_quote(quote):
-    updated_quote = update_quote(quote, {'likes': quote.likes - 1})
-    return _set_attributes(updated_quote, is_liked=False)
+    quote, is_liked = result
+    return _set_attributes(quote, is_liked=is_liked)
 
 
 def update_quote(quote, data):
@@ -118,9 +114,6 @@ def create_quote(data):
 
 
 def delete_quote(quote):
-    likes = Like.get_by(first=False, quote_id=quote.id)
-    for like in likes:
-        delete_like(like)
     quote.delete()
 
 
@@ -144,13 +137,12 @@ def create_user(data):
     return User.create(**data)
 
 
-def get_user_or_404(user_id):
-    result = User.get_by(first=True, id=user_id)
+def get_user_by_id(user_id):
+    return User.get_by(first=True, id=user_id)
 
-    if result is None:
-        abort(404)
 
-    return result
+def get_quote_statuses():
+    return QuoteStatus.query.all()
 
 
 @event.listens_for(Like, 'after_insert')
