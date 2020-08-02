@@ -150,6 +150,12 @@ class Quote(Resource):
         )
         args = parser.parse_args()
 
+        status = args.pop('status', None)
+        if status:
+            for curr_status in statuses:
+                if curr_status.name == status:
+                    args['status'] = curr_status
+
         current_user = get_jwt_identity()
         quote = get_quote_or_404(quote_id, current_user['id'])
 
