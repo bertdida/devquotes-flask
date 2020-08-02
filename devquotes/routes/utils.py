@@ -18,7 +18,7 @@ def admin_only(func):
     return wrapper
 
 
-def get_quote_or_404(quote_id, user_id):
+def get_quote_or_404(quote_id, user_id=None):
     quote = db_client.get_quote(quote_id, user_id)
     if quote is None:
         abort(404)
