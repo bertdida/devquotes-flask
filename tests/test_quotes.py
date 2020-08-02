@@ -45,6 +45,18 @@ def test_get_quote_not_found(client):
     assert resp.status_code == 404
 
 
+def test_get_quote_contributor(client, quote):
+    resp = client.get('/v1/quotes/{0.id}/contributor'.format(quote))
+    assert resp.status_code == 401
+
+
+def test_admin_get_quote_contributor(client_admin, quote):
+    resp = client_admin.get('/v1/quotes/{0.id}/contributor'.format(quote))
+
+    assert resp.status_code == 200
+    assert_valid_schema(resp.json, 'user.json')
+
+
 def test_search_quote(client, quote):
     resp = client.get('/v1/quotes/?q={0.author}'.format(quote))
     resp_json = resp.json
