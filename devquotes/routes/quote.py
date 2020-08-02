@@ -5,7 +5,6 @@ from flask_jwt_extended import (
 )
 from flask_restful import (
     abort,
-    inputs,
     marshal_with,
     reqparse,
     Resource,
@@ -14,17 +13,14 @@ from sqlalchemy.exc import IntegrityError
 
 from . import db_client
 from .fields import quote_fields, quotes_fields
-from .utils import admin_only
+from .utils import admin_only, get_quote_or_404
 
 
-def _get_quote_args():
-    parser = reqparse.RequestParser(trim=True)
-    parser.add_argument('author', type=str, required=True, nullable=False)
-    parser.add_argument('quotation', type=str, required=True, nullable=False)
-    parser.add_argument('source', type=str)
-    parser.add_argument('is_published', type=inputs.boolean)
+def _non_empty_string(string):
+    if not string:
+        raise ValueError('Must not be an empty string')
 
-    return parser.parse_args()
+    return string
 
 
 class Quotes(Resource):
@@ -32,17 +28,20 @@ class Quotes(Resource):
     @marshal_with(quotes_fields)
     @jwt_optional
     def get(self):
+        statuses = db_client.get_quote_statuses()
+        status_choices = [status.name for status in statuses]
+
         parser = reqparse.RequestParser()
-        parser.add_argument('q', type=str, location='args')
-        parser.add_argument('page', type=int, location='args')
-        parser.add_argument('per_page', type=int, location='args')
-        parser.add_argument('is_published', type=inputs.boolean, location='args', default=True)  # noqa
+        parser.add_argument('q', location='args')
+        parser.add_argument('page', location='args', type=int)
+        parser.add_argument('per_page', location='args', type=int)
+        parser.add_argument('status', location='args', choices=status_choices)
         args = parser.parse_args()
 
         search_query = args['q']
         page = args['page']
         per_page = args['per_page']
-        is_published = args['is_published']
+        status = args['status']
 
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
@@ -50,16 +49,52 @@ class Quotes(Resource):
         if search_query:
             return db_client.search_quotes(search_query, page, per_page, user_id)
 
-        return db_client.get_quotes(page, per_page, user_id, is_published)
+        return db_client.get_quotes(page, per_page, user_id, status)
 
     @marshal_with(quote_fields)
     @jwt_required
     def post(self):
-        args = _get_quote_args()
+        statuses = db_client.get_quote_statuses()
+        status_choices = [status.name for status in statuses]
+
+        parser = reqparse.RequestParser(trim=True)
+        parser.add_argument(
+            'author',
+            location='form',
+            nullable=False,
+            required=True,
+            type=_non_empty_string,
+        )
+        parser.add_argument(
+            'quotation',
+            location='form',
+            nullable=False,
+            required=True,
+            type=_non_empty_string,
+        )
+        parser.add_argument(
+            'source',
+            location='form',
+            nullable=True,
+            type=_non_empty_string,
+        )
+        parser.add_argument(
+            'status',
+            location='form',
+            nullable=False,
+            store_missing=False,
+            choices=status_choices,
+        )
+        args = parser.parse_args()
 
         current_user = get_jwt_identity()
         args['contributor_id'] = current_user['id']
-        args['is_published'] = current_user['is_admin']
+
+        status = args.pop('status', 'pending_review')
+        if status:
+            for curr_status in statuses:
+                if curr_status.name == status:
+                    args['status'] = curr_status
 
         try:
             return db_client.create_quote(args), 201
@@ -75,15 +110,48 @@ class Quote(Resource):
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
-        return db_client.get_quote_or_404(quote_id, user_id)
+        return get_quote_or_404(quote_id, user_id)
 
     @marshal_with(quote_fields)
     @jwt_required
     @admin_only
     def patch(self, quote_id):
-        args = _get_quote_args()
+        statuses = db_client.get_quote_statuses()
+        status_choices = [status.name for status in statuses]
+
+        parser = reqparse.RequestParser(trim=True)
+        parser.add_argument(
+            'author',
+            location='form',
+            nullable=False,
+            store_missing=False,
+            type=_non_empty_string,
+        )
+        parser.add_argument(
+            'quotation',
+            location='form',
+            nullable=False,
+            store_missing=False,
+            type=_non_empty_string,
+        )
+        parser.add_argument(
+            'source',
+            location='form',
+            nullable=True,
+            store_missing=False,
+            type=_non_empty_string,
+        )
+        parser.add_argument(
+            'status',
+            location='form',
+            nullable=False,
+            store_missing=False,
+            choices=status_choices,
+        )
+        args = parser.parse_args()
+
         current_user = get_jwt_identity()
-        quote = db_client.get_quote_or_404(quote_id, current_user['id'])
+        quote = get_quote_or_404(quote_id, current_user['id'])
 
         return db_client.update_quote(quote, args)
 
@@ -91,7 +159,7 @@ class Quote(Resource):
     @admin_only
     def delete(self, quote_id):
         current_user = get_jwt_identity()
-        quote = db_client.get_quote_or_404(quote_id, current_user['id'])
+        quote = get_quote_or_404(quote_id, current_user['id'])
         db_client.delete_quote(quote)
 
         return '', 204
