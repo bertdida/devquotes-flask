@@ -12,7 +12,7 @@ from flask_restful import (
 from sqlalchemy.exc import IntegrityError
 
 from . import db_client
-from .fields import quote_fields, quotes_fields
+from .fields import quote_fields, quotes_fields, user_fields
 from .utils import admin_only, get_quote_or_404
 
 
@@ -178,3 +178,13 @@ class Random(Resource):
             abort(404)
 
         return quote
+
+
+class Contributor(Resource):
+
+    @marshal_with(user_fields)
+    @jwt_required
+    @admin_only
+    def get(self, quote_id):
+        quote = get_quote_or_404(quote_id)
+        return quote.contributor
