@@ -60,27 +60,27 @@ class Quotes(Resource):
         parser = reqparse.RequestParser(trim=True)
         parser.add_argument(
             'author',
-            location='form',
+            location=('json', 'form'),
             nullable=False,
             required=True,
             type=_non_empty_string,
         )
         parser.add_argument(
             'quotation',
-            location='form',
+            location=('json', 'form'),
             nullable=False,
             required=True,
             type=_non_empty_string,
         )
         parser.add_argument(
             'source',
-            location='form',
+            location=('json', 'form'),
             nullable=True,
             type=_non_empty_string,
         )
         parser.add_argument(
             'status',
-            location='form',
+            location=('json', 'form'),
             nullable=False,
             store_missing=False,
             choices=status_choices,
@@ -122,28 +122,28 @@ class Quote(Resource):
         parser = reqparse.RequestParser(trim=True)
         parser.add_argument(
             'author',
-            location='form',
+            location=('json', 'form'),
             nullable=False,
             store_missing=False,
             type=_non_empty_string,
         )
         parser.add_argument(
             'quotation',
-            location='form',
+            location=('json', 'form'),
             nullable=False,
             store_missing=False,
             type=_non_empty_string,
         )
         parser.add_argument(
             'source',
-            location='form',
+            location=('json', 'form'),
             nullable=True,
             store_missing=False,
             type=_non_empty_string,
         )
         parser.add_argument(
             'status',
-            location='form',
+            location=('json', 'form'),
             nullable=False,
             store_missing=False,
             choices=status_choices,
