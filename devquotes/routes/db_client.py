@@ -64,7 +64,7 @@ def get_user_liked_quotes(page, per_page, user_id=None):
         .filter(QuoteStatus.name == PUBLISHED_STATUS_NAME)
         .add_columns(case([(Like.quote_id.isnot(None), True)], else_=False).label('is_liked'))
         .join(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
-        .filter(Quote.likes > 0)
+        .filter(Quote.total_likes > 0)
         .order_by(Like.created_at.desc())
     )
 
@@ -151,7 +151,7 @@ def increment_quote_likes(_, connection, target):
     connection.execute(
         quote_table
         .update(Quote.id == target.quote_id)
-        .values(likes=Quote.likes + 1)
+        .values(total_likes=Quote.total_likes + 1)
     )
 
 
@@ -160,6 +160,6 @@ def decrement_quote_likes(_, connection, target):
     quote_table = Quote.__table__
     connection.execute(
         quote_table
-        .update(and_(Quote.id == target.quote_id, Quote.likes > 0))
-        .values(likes=Quote.likes - 1)
+        .update(and_(Quote.id == target.quote_id, Quote.total_likes > 0))
+        .values(total_likes=Quote.total_likes - 1)
     )

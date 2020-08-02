@@ -15,7 +15,7 @@ class Quote(db.Model, BaseMixin):
     author = db.Column(db.String(100), nullable=False)
     quotation = db.Column(db.String(200), nullable=False)
     source = db.Column(db.String, nullable=True)
-    likes = db.Column(db.Integer, nullable=False, default=0)
+    total_likes = db.Column(db.Integer, nullable=False, default=0)
 
     contributor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # noqa
     contributor = db.relationship('User', back_populates='contributed_quotes')

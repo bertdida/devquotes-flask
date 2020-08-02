@@ -29,7 +29,7 @@ quote_fields = {
         'author': fields.String,
         'quotation': fields.String,
         'source': fields.String,
-        'likes': fields.Integer,
+        'total_likes': fields.Integer,
         'is_liked': fields.Boolean(default=False),
         'status': Status,
         'created_at': fields.DateTime(dt_format='iso8601'),

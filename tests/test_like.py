@@ -30,7 +30,7 @@ def test_authorized_like(client_admin, quote):
     resp_data = resp_json['data']
 
     assert resp.status_code == 200
-    assert resp_data['likes'] == 1
+    assert resp_data['total_likes'] == 1
     assert_valid_schema(resp.json, 'quote.json')
 
 
@@ -40,7 +40,7 @@ def test_authorized_unlike(client_admin, quote):
     resp_data = resp_json['data']
 
     assert resp.status_code == 200
-    assert resp_data['likes'] == 0
+    assert resp_data['total_likes'] == 0
     assert_valid_schema(resp.json, 'quote.json')
 
 

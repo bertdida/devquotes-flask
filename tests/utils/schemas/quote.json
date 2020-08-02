@@ -10,7 +10,7 @@
         "author",
         "quotation",
         "source",
-        "likes",
+        "total_likes",
         "is_liked",
         "status",
         "created_at",
@@ -29,7 +29,7 @@
         "source": {
           "type": ["null", "string"]
         },
-        "likes": {
+        "total_likes": {
           "type": "number"
         },
         "is_liked": {
