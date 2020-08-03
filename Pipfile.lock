@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "07a15e0dcc50f970821d0e1d04d0eebde217916d89874ca729ff1cb566c988d1"
+            "sha256": "64c0757acd363ab3006df543fd81a3e5af832a7f3b097f25144a6d4b7d942b6d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -484,6 +484,13 @@
             ],
             "version": "==1.0.4"
         },
+        "python-slugify": {
+            "hashes": [
+                "sha256:69a517766e00c1268e5bbfc0d010a0a8508de0b18d30ad5a1ff357f8ae724270"
+            ],
+            "index": "pypi",
+            "version": "==4.0.1"
+        },
         "pytz": {
             "hashes": [
                 "sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed",
@@ -559,6 +566,13 @@
             ],
             "version": "==0.36.8"
         },
+        "text-unidecode": {
+            "hashes": [
+                "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8",
+                "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"
+            ],
+            "version": "==1.3"
+        },
         "uritemplate": {
             "hashes": [
                 "sha256:07620c3f3f8eed1f12600845892b0e036a2420acf513c53f7de0abd911a5894f",
@@ -575,9 +589,9 @@
         },
         "validators": {
             "hashes": [
-                "sha256:992abaff76f0fb4040e29c57222b0786ca8fab2a779104dd855e880039602b15"
+                "sha256:1f2dfc158f8399cb7916fd0665133ad462c094870301ba77b86cc5f383431abb"
             ],
-            "version": "==0.16.0"
+            "version": "==0.17.0"
         },
         "werkzeug": {
             "hashes": [
@@ -612,10 +626,10 @@
         },
         "autopep8": {
             "hashes": [
-                "sha256:60fd8c4341bab59963dafd5d2a566e94f547e660b9b396f772afe67d8481dbf0"
+                "sha256:d21d3901cb0da6ebd1e83fc9b0dfbde8b46afc2ede4fe32fbda0c7c6118ca094"
             ],
             "index": "pypi",
-            "version": "==1.5.3"
+            "version": "==1.5.4"
         },
         "colorama": {
             "hashes": [

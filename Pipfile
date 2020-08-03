@@ -24,6 +24,7 @@ psycopg2 = "*"
 gunicorn = "*"
 google-auth = "*"
 sqlalchemy-searchable = "*"
+python-slugify = "*"
 
 [requires]
 python_version = "3.8"
