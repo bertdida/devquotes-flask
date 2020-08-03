@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from slugify import slugify
+from sqlalchemy import event
 from sqlalchemy_utils.types import TSVectorType
 
 from . import db
@@ -16,6 +18,7 @@ class Quote(db.Model, BaseMixin):
     quotation = db.Column(db.String(200), nullable=False)
     source = db.Column(db.String, nullable=True)
     total_likes = db.Column(db.Integer, nullable=False, default=0)
+    slug = db.Column(db.String(200), nullable=True)
 
     contributor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # noqa
     contributor = db.relationship('User', back_populates='contributed_quotes')
@@ -33,3 +36,11 @@ class Quote(db.Model, BaseMixin):
         ),
         nullable=False
     ))
+
+    @staticmethod
+    def slugify(target, value, oldvalue, _):
+        if value and (not target.slug or value != oldvalue):
+            target.slug = slugify(value)
+
+
+event.listen(Quote.quotation, 'set', Quote.slugify, retval=False)
