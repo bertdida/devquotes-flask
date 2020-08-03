@@ -33,6 +33,7 @@ quote_fields = {
         'total_likes': fields.Integer,
         'is_liked': fields.Boolean(default=False),
         'status': Status,
+        'slug': fields.String,
         'created_at': fields.DateTime(dt_format='iso8601'),
         'updated_at': fields.DateTime(dt_format='iso8601'),
     }
