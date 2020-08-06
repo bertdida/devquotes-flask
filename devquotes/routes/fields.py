@@ -47,3 +47,15 @@ quotes_fields = {
     'total': fields.Integer(attribute='total'),
     'data': fields.List(fields.Nested(quote_fields), attribute='items'),
 }
+
+quote_status_fields = {
+    'data': {
+        'id': fields.Integer,
+        'name': fields.String,
+        'display_name': fields.String,
+    }
+}
+
+quotes_statuses_fields = {
+    'data': fields.List(fields.Nested(quote_status_fields), attribute='items'),
+}
