@@ -27,7 +27,7 @@ def init_app(app):
 
     from .auth import Token, TokenRevoke, TokenRefresh
     from .quote import Quotes, Quote, Random as RandomQuote, Contributor
-    from .likes import Likes, Like
+    from .like import Likes, Like
     from .user import User, CurrentUser
 
     api.init_app(bp)
