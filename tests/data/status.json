@@ -1,0 +1,10 @@
+[
+  {
+    "name": "published",
+    "display_name": "Published"
+  },
+  {
+    "name": "pending_review",
+    "display_name": "Pending Review"
+  }
+]

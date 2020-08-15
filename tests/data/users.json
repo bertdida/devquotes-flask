@@ -1,0 +1,12 @@
+[
+  {
+    "firebase_user_id": "admin_firebase_user_id",
+    "name": "Herbert Verdida",
+    "is_admin": true
+  },
+  {
+    "firebase_user_id": "user_firebase_user_id",
+    "name": "John Doe",
+    "is_admin": false
+  }
+]

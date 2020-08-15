@@ -1,0 +1,32 @@
+[
+  {
+    "author": "Linus Torvalds",
+    "quotation": "Talk is cheap. Show me the code.",
+    "status_id": 1,
+    "contributor_id": 1
+  },
+  {
+    "author": "Tim Kadlec",
+    "quotation": "Blame the implementation, not the technique.",
+    "status_id": 1,
+    "contributor_id": 1
+  },
+  {
+    "author": "Ralph William Gosper, Jr.",
+    "quotation": "A data structure is just a stupid programming language.",
+    "status_id": 1,
+    "contributor_id": 1
+  },
+  {
+    "author": "Antonin Januska",
+    "quotation": "A foreach loop avoided is a CPU cycle earned.",
+    "status_id": 2,
+    "contributor_id": 2
+  },
+  {
+    "author": "David Gries",
+    "quotation": "A formal parsing algorithm should not always be used.",
+    "status_id": 2,
+    "contributor_id": 2
+  }
+]
