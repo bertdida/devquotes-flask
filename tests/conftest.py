@@ -1,8 +1,11 @@
+import json
+import os
 from contextlib import contextmanager
 
 import pytest
 import testing.postgresql as postgresql
 from flask_jwt_extended import create_access_token, create_refresh_token
+from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm.mapper import configure_mappers
 
 import config
@@ -12,52 +15,46 @@ from devquotes.models.quote import Quote
 from devquotes.models.quote_status import QuoteStatus
 from devquotes.models.user import User
 
-INITIAL_ADMIN = {
-    'firebase_user_id': 'firebaseuserid',
-    'firebase_jwt': 'firebasejwt',
-    'name': 'Herbert Verdida',
-    'is_admin': True,
-}
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
-INITIAL_QUOTE_STATUSES = [
+seed_configs = [
     {
-        'name': 'published',
-        'display_name': 'Published',
+        'model': User,
+        'filename': 'users.json',
     },
     {
-        'name': 'pending_review',
-        'display_name': 'Pending Review',
-    },
-]
-
-INITIAL_QUOTES = [
-    {
-        'author': 'Linus Torvalds',
-        'quotation': 'Talk is cheap. Show me the code.',
-        'source': 'https://lkml.org/lkml/2000/8/25/132',
-        'status': INITIAL_QUOTE_STATUSES[0]['name'],
+        'model': QuoteStatus,
+        'filename': 'status.json',
     },
     {
-        'author': 'Tim Kadlec',
-        'quotation': 'Blame the implementation, not the technique.',
-        'status': INITIAL_QUOTE_STATUSES[1]['name'],
+        'model': Quote,
+        'filename': 'quotes.json',
     }
 ]
 
 
-@pytest.fixture(name='initial_admin', scope='session')
-def setup_and_teardown_initial_admin():
-    return INITIAL_ADMIN
+def load_data(filename):
+    with open(f'{dir_path}/data/{filename}') as data_file:
+        return json.load(data_file)
 
 
-@pytest.fixture(name='initial_quote_statuses', scope='session')
-def setup_and_teardown_initial_quote_statuses():
-    return INITIAL_QUOTE_STATUSES
+def create_model(model, data):
+    # https://stackoverflow.com/a/52638766/8062659
+    return model.create(**{
+        k: v for k, v in data.items()
+        if k in class_mapper(model).attrs.keys()
+    })
 
 
-@pytest.fixture(name='initial_quotes', scope='session')
-def setup_and_teardown_initial_quotes():
-    return INITIAL_QUOTES
+@contextmanager
+def db_session_no_expire():
+    # https://stackoverflow.com/a/51452451/8062659
+    session = db.session()
+    session.expire_on_commit = False
+    try:
+        yield
+    finally:
+        session.expire_on_commit = True
 
 
 @pytest.fixture(name='postgres', scope='session')
@@ -94,55 +91,39 @@ def setup_and_teardown_client(app):
     return app.test_client()
 
 
-@contextmanager
-def db_session_no_expire():
-    # https://stackoverflow.com/a/51452451/8062659
-    session = db.session()
-    session.expire_on_commit = False
-    try:
-        yield
-    finally:
-        session.expire_on_commit = True
+@pytest.fixture(name='seed', scope='module', autouse=True)
+def seed(database, app):
+    for seed_config in seed_configs:
+        model, filename = seed_config.values()
+        data = load_data(filename)
+
+        for dict_data in data:
+            with app.app_context(), db_session_no_expire():
+                create_model(model, dict_data)
+
+    yield
+
+    # must truncate `quote` table first to avoid
+    # foreign key violation
+    Quote.query.delete()
+    QuoteStatus.query.delete()
+    User.query.delete()
+    db.session.commit()
 
 
-@pytest.fixture(name='user_admin', scope='module', autouse=True)
-def setup_and_teardown_user_admin(app, initial_admin):
-    admin_copy = dict(initial_admin)
-    admin_copy.pop('firebase_jwt')
-
-    with app.app_context(), db_session_no_expire():
-        user = User.create(**admin_copy)
-
-    yield user
-    user.delete()
+@pytest.fixture(name='user_admin', scope='module')
+def setup_and_teardown_user_admin():
+    yield User.get_by(first=True, is_admin=True)
 
 
-@pytest.fixture(name='quote_statuses', scope='module', autouse=True)
-def setup_and_teardown_quote_statuses(app, initial_quote_statuses):
-    with app.app_context(), db_session_no_expire():
-        for data in initial_quote_statuses:
-            QuoteStatus.create(**data)
-
+@pytest.fixture(name='quote_statuses', scope='module')
+def setup_and_teardown_quote_statuses():
     yield QuoteStatus.query.all()
 
-    QuoteStatus.query.delete()
-    db.session.commit()
 
-
-@pytest.fixture(name='quotes', scope='module', autouse=True)
-def setup_and_teardown_quotes(app, initial_quotes, user_admin):
-    with app.app_context(), db_session_no_expire():
-        for data in initial_quotes:
-            data_copy = dict(data)
-            status_name = data_copy.pop('status')
-
-            status = QuoteStatus.get_by(first=True, name=status_name)
-            Quote.create(**data_copy, contributor=user_admin, status=status)
-
+@pytest.fixture(name='quotes', scope='module')
+def setup_and_teardown_quotes():
     yield Quote.query.all()
-
-    Quote.query.delete()
-    db.session.commit()
 
 
 @pytest.fixture(name='quote', scope='module')
