@@ -10,6 +10,14 @@ NEW_QUOTE = {
 }
 
 
+def test_get_quotes(client):
+    resp = client.get('/v1/quotes')
+    resp_json = resp.json
+
+    assert resp.status_code == 200
+    assert_valid_schema(resp_json, 'quotes.json')
+
+
 def test_filter_quotes_by_status(client, quote_statuses):
     for status in quote_statuses:
         status_name = status.name
