@@ -34,6 +34,22 @@ def test_filter_quotes_by_status(client, quote_statuses):
         assert_valid_schema(resp_json, 'quotes.json')
 
 
+def test_filter_quotes_by_sumitted_by(client_admin, user):
+    resp = client_admin.get(f'/v1/quotes?submitted_by={user.name}')
+    resp_json = resp.json
+    resp_data = resp_json['data']
+
+    assert resp.status_code == 200
+    assert_valid_schema(resp_json, 'quotes.json')
+
+    for quote in resp_data:
+        quote_id = quote['data']['id']
+        resp = client_admin.get(f'/v1/quotes/{quote_id}/contributor')
+        resp_data = resp.json['data']
+
+        assert resp_data['name'] == user.name
+
+
 def test_get_quote(client, quote):
     resp = client.get('/v1/quotes/{0.id}'.format(quote))
 
