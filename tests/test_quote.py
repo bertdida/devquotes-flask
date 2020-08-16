@@ -10,7 +10,7 @@ NEW_QUOTE = {
 }
 
 
-def test_get_quotes(client, quote_statuses):
+def test_filter_quotes_by_status(client, quote_statuses):
     for status in quote_statuses:
         status_name = status.name
 
