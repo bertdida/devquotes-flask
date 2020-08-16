@@ -111,6 +111,11 @@ def seed(database, app):
     db.session.commit()
 
 
+@pytest.fixture(name='user', scope='module')
+def setup_and_teardown_user():
+    yield User.get_by(first=True, is_admin=False)
+
+
 @pytest.fixture(name='user_admin', scope='module')
 def setup_and_teardown_user_admin():
     yield User.get_by(first=True, is_admin=True)
