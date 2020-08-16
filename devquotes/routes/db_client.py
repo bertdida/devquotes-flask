@@ -1,3 +1,5 @@
+import operator as op
+
 from flask import current_app
 from sqlalchemy import and_, case, event
 from sqlalchemy.sql.expression import func
@@ -29,13 +31,75 @@ def _paginate_quote(query, page, per_page):
     return result
 
 
-def get_quotes(page, per_page, user_id=None, status=None):
-    status_name = PUBLISHED_STATUS_NAME if status is None else status
+def _parse_likes_filter(value):
+    from .quote import LIKES_FILTER_RE
+
+    operator_map = {
+        'gt': op.gt,
+        'et': op.eq,
+        'lt': op.lt,
+    }
+
+    match = LIKES_FILTER_RE.search(value)
+    operator = match.group('operator')
+    value = match.group('value')
+
+    return operator_map[operator], int(value)
+
+
+def _get_filter_queries(**filters):
+    filter_configs = {
+        'status': {
+            'model': QuoteStatus,
+            'attribute': 'name',
+            'value': PUBLISHED_STATUS_NAME,
+        },
+        'submitted_by': {
+            'model': User,
+            'attribute': 'name',
+            'value': None,
+        },
+        'likes': {
+            'model': Quote,
+            'attribute': 'total_likes',
+            'value': None,
+        }
+    }
+
+    queries = []
+    filter_configs_keys = filter_configs.keys()
+
+    # override `filter_configs` values from the given filters
+    for key, value in filters.items():
+        if value and key in filter_configs_keys:
+            filter_configs[key]['value'] = value
+
+    for key, config in filter_configs.items():
+        operator = op.eq
+        value = config['value']
+        model = config['model']
+        attribute = config['attribute']
+
+        if not value:
+            continue
+
+        if key == 'likes':
+            operator, value = _parse_likes_filter(value)
+
+        query = operator(getattr(model, attribute), value)
+        queries.append(query)
+
+    return queries
+
+
+def get_quotes(page, per_page, user_id=None, **filters):
+    filter_queries = _get_filter_queries(**filters)
 
     query = (
         Quote.query
+        .join(User)
         .join(QuoteStatus)
-        .filter(QuoteStatus.name == status_name)
+        .filter(and_(*filter_queries))
         .add_columns(case([(Like.quote_id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
         .order_by(Quote.created_at.desc())

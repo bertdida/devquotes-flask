@@ -1,3 +1,5 @@
+import re
+
 from flask_jwt_extended import (
     get_jwt_identity,
     jwt_optional,
@@ -15,10 +17,20 @@ from . import db_client
 from .fields import quote_fields, quotes_fields, user_fields
 from .utils import admin_only, get_quote_or_404
 
+LIKES_FILTER_RE = re.compile(r'^(?P<operator>[g|l|e]t)(?P<value>\d*)$')
+
 
 def _non_empty_string(string):
     if not string:
         raise ValueError('Must not be an empty string')
+
+    return string
+
+
+def _valid_likes_pattern(string):
+    if not LIKES_FILTER_RE.match(string):
+        pattern = LIKES_FILTER_RE.pattern
+        raise ValueError(f'Invalid pattern, must follow {pattern}')
 
     return string
 
@@ -36,12 +48,16 @@ class Quotes(Resource):
         parser.add_argument('page', location='args', type=int)
         parser.add_argument('per_page', location='args', type=int)
         parser.add_argument('status', location='args', choices=status_choices)
+        parser.add_argument('submitted_by', location='args')
+        parser.add_argument('likes', location='args', type=_valid_likes_pattern)  # noqa
         args = parser.parse_args()
 
         search_query = args['q']
         page = args['page']
         per_page = args['per_page']
         status = args['status']
+        submitted_by = args['submitted_by']
+        likes = args['likes']
 
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
@@ -49,7 +65,13 @@ class Quotes(Resource):
         if search_query:
             return db_client.search_quotes(search_query, page, per_page, user_id)
 
-        return db_client.get_quotes(page, per_page, user_id, status)
+        filters = {
+            'status': status,
+            'submitted_by': submitted_by,
+            'likes': likes,
+        }
+
+        return db_client.get_quotes(page, per_page, user_id, **filters)
 
     @marshal_with(quote_fields)
     @jwt_required
