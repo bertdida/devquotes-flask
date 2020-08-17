@@ -50,6 +50,24 @@ def test_filter_quotes_by_sumitted_by(client_admin, user):
         assert resp_data['name'] == user.name
 
 
+def test_filter_quotes_likes(client_admin, quote):
+    post_data = {
+        'id': quote.id
+    }
+
+    client_admin.post('/v1/likes', data=post_data)
+
+    resp = client_admin.get('/v1/quotes?likes=gt0')
+    resp_json = resp.json
+    resp_data = resp_json['data']
+
+    assert resp.status_code == 200
+    assert_valid_schema(resp_json, 'quotes.json')
+
+    for quote in resp_data:
+        assert quote['data']['total_likes'] >= 0
+
+
 def test_get_quote(client, quote):
     resp = client.get('/v1/quotes/{0.id}'.format(quote))
 
