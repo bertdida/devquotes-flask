@@ -11,7 +11,7 @@ def test_unauthorized_like(client, quote):
 
 
 def test_unauthorized_unlike(client, quote):
-    resp = client.delete('/v1/likes/{0.id}'.format(quote))
+    resp = client.delete(f'/v1/likes/{quote.id}')
     assert resp.status_code == 401
 
 
@@ -35,7 +35,7 @@ def test_authorized_like(client_admin, quote):
 
 
 def test_authorized_unlike(client_admin, quote):
-    resp = client_admin.delete('/v1/likes/{0.id}'.format(quote))
+    resp = client_admin.delete(f'/v1/likes/{quote.id}')
     resp_json = resp.json
     resp_data = resp_json['data']
 
