@@ -15,6 +15,10 @@ def assert_valid_schema(response, schema_file):
     return validate(response.json, schema)
 
 
+def assert_valid_status_code(response, status_code):
+    assert response.status_code == status_code
+
+
 def _load_json_schema(filename):
     relative_path = join('schemas', filename)
     absolute_path = join(dirname(__file__), relative_path)
