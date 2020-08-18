@@ -32,7 +32,7 @@ def test_unauthorized_user(client, quote):
     assert resp.status_code == 401
 
 
-def test_uthorized_user(client, quote, user):
+def test_authorized_user(client, quote, user):
     login(client, user)
     test = Actions(client, quote)
 
