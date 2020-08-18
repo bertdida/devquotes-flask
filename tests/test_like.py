@@ -2,7 +2,7 @@ from .test_auth import login
 from .utils.assertions import assert_valid_schema
 
 
-class TestLike:
+class Actions:
 
     def __init__(self, client, quote):
         self.client = client
@@ -20,7 +20,7 @@ class TestLike:
 
 
 def test_unauthorized_user(client, quote):
-    test = TestLike(client, quote)
+    test = Actions(client, quote)
 
     resp = test.like()
     assert resp.status_code == 401
@@ -34,7 +34,7 @@ def test_unauthorized_user(client, quote):
 
 def test_uthorized_user(client, quote, user):
     login(client, user)
-    test = TestLike(client, quote)
+    test = Actions(client, quote)
 
     resp = test.like()
     assert resp.status_code == 200
