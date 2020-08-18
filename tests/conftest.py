@@ -131,7 +131,7 @@ def setup_and_teardown_quote():
     return Quote.query.first()
 
 
-@pytest.fixture(name='client', scope='session')
+@pytest.fixture(name='client', scope='function')
 def setup_and_teardown_client(app):
     return app.test_client()
 
