@@ -10,9 +10,9 @@ def assert_post_data_in_response(data, response):
         assert json['data'][key] == value
 
 
-def assert_valid_schema(data, schema_file):
+def assert_valid_schema(response, schema_file):
     schema = _load_json_schema(schema_file)
-    return validate(data, schema)
+    return validate(response.json, schema)
 
 
 def _load_json_schema(filename):
