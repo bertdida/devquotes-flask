@@ -86,11 +86,6 @@ def setup_and_teardown_database(app):
     db.drop_all()
 
 
-@pytest.fixture(name='client', scope='session')
-def setup_and_teardown_client(app):
-    return app.test_client()
-
-
 @pytest.fixture(name='seed', scope='module', autouse=True)
 def seed(database, app):
     for seed_config in seed_configs:
@@ -134,6 +129,11 @@ def setup_and_teardown_quotes():
 @pytest.fixture(name='quote', scope='module')
 def setup_and_teardown_quote():
     return Quote.query.first()
+
+
+@pytest.fixture(name='client', scope='session')
+def setup_and_teardown_client(app):
+    return app.test_client()
 
 
 @pytest.fixture(name='client_admin', scope='module')
