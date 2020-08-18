@@ -1,51 +1,55 @@
+from .test_auth import login
 from .utils.assertions import assert_valid_schema
 
 
-def test_unauthorized_like(client, quote):
-    post_data = {
-        'id': quote.id
-    }
+class TestLike:
 
-    resp = client.post('/v1/likes', data=post_data)
+    def __init__(self, client, quote):
+        self.client = client
+        self.quote = quote
+
+    def like(self):
+        post_data = {'id': self.quote.id}
+        return self.client.post('/v1/likes', data=post_data)
+
+    def unlike(self):
+        return self.client.delete(f'/v1/likes/{self.quote.id}')
+
+    def get_favorites(self):
+        return self.client.get('/v1/likes')
+
+
+def test_unauthorized_user(client, quote):
+    test = TestLike(client, quote)
+
+    resp = test.like()
+    assert resp.status_code == 401
+
+    resp = test.unlike()
+    assert resp.status_code == 401
+
+    resp = test.get_favorites()
     assert resp.status_code == 401
 
 
-def test_unauthorized_unlike(client, quote):
-    resp = client.delete(f'/v1/likes/{quote.id}')
-    assert resp.status_code == 401
+def test_uthorized_user(client, quote, user):
+    login(client, user)
+    test = TestLike(client, quote)
 
-
-def test_unauthorized_get_favorites(client):
-    resp = client.get('/v1/likes')
-    assert resp.status_code == 401
-
-
-def test_authorized_like(client_admin, quote):
-    post_data = {
-        'id': quote.id
-    }
-
-    resp = client_admin.post('/v1/likes', data=post_data)
-    resp_json = resp.json
-    resp_data = resp_json['data']
-
+    resp = test.like()
     assert resp.status_code == 200
-    assert resp_data['total_likes'] == 1
+    assert resp.json['data']['total_likes'] == 1
     assert_valid_schema(resp.json, 'quote.json')
 
-
-def test_authorized_unlike(client_admin, quote):
-    resp = client_admin.delete(f'/v1/likes/{quote.id}')
-    resp_json = resp.json
-    resp_data = resp_json['data']
-
+    resp = test.get_favorites()
     assert resp.status_code == 200
-    assert resp_data['total_likes'] == 0
-    assert_valid_schema(resp.json, 'quote.json')
-
-
-def test_authorized_get_favorites(client_admin):
-    resp = client_admin.get('/v1/likes')
-
-    assert resp.status_code == 200
+    assert resp.json['total'] == 1
     assert_valid_schema(resp.json, 'quotes.json')
+
+    resp = test.unlike()
+    assert resp.status_code == 200
+    assert resp.json['data']['total_likes'] == 0
+    assert_valid_schema(resp.json, 'quote.json')
+
+    resp = test.get_favorites()
+    assert resp.json['total'] == 0
