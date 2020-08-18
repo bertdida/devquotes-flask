@@ -1,5 +1,8 @@
 from .test_auth import login
-from .utils.assertions import assert_valid_schema
+from .utils.assertions import (
+    assert_valid_schema,
+    assert_valid_status_code
+)
 
 
 class Actions:
@@ -23,13 +26,13 @@ def test_guest_user(client, quote):
     test = Actions(client, quote)
 
     resp = test.like()
-    assert resp.status_code == 401
+    assert_valid_status_code(resp, 401)
 
     resp = test.unlike()
-    assert resp.status_code == 401
+    assert_valid_status_code(resp, 401)
 
     resp = test.get_favorites()
-    assert resp.status_code == 401
+    assert_valid_status_code(resp, 401)
 
 
 def test_user(client, quote, user):
@@ -37,19 +40,19 @@ def test_user(client, quote, user):
     test = Actions(client, quote)
 
     resp = test.like()
-    assert resp.status_code == 200
+    assert_valid_status_code(resp, 200)
+    assert_valid_schema(resp, 'quote.json')
     assert resp.json['data']['total_likes'] == 1
-    assert_valid_schema(resp.json, 'quote.json')
 
     resp = test.get_favorites()
-    assert resp.status_code == 200
+    assert_valid_status_code(resp, 200)
+    assert_valid_schema(resp, 'quotes.json')
     assert resp.json['total'] == 1
-    assert_valid_schema(resp.json, 'quotes.json')
 
     resp = test.unlike()
-    assert resp.status_code == 200
+    assert_valid_status_code(resp, 200)
+    assert_valid_schema(resp, 'quote.json')
     assert resp.json['data']['total_likes'] == 0
-    assert_valid_schema(resp.json, 'quote.json')
 
     resp = test.get_favorites()
     assert resp.json['total'] == 0
