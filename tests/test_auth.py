@@ -14,9 +14,9 @@ def test_token(client, user_admin):
         resp = client.post('/v1/auth/token', data=post_data)
         cookie_names = [cookie.name for cookie in client.cookie_jar]
 
-        assert resp.status_code == 200
-        assert 'access_token_cookie' in cookie_names
-        assert 'refresh_token_cookie' in cookie_names
+    assert resp.status_code == 200
+    assert 'access_token_cookie' in cookie_names
+    assert 'refresh_token_cookie' in cookie_names
 
 
 def test_refresh(client):
