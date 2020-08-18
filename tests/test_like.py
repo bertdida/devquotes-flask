@@ -19,7 +19,7 @@ class Actions:
         return self.client.get('/v1/likes')
 
 
-def test_unauthorized_user(client, quote):
+def test_guest_user(client, quote):
     test = Actions(client, quote)
 
     resp = test.like()
@@ -32,7 +32,7 @@ def test_unauthorized_user(client, quote):
     assert resp.status_code == 401
 
 
-def test_authorized_user(client, quote, user):
+def test_user(client, quote, user):
     login(client, user)
     test = Actions(client, quote)
 
