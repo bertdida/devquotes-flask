@@ -1,3 +1,6 @@
+# pylint: disable=attribute-defined-outside-init
+import pytest
+
 from .test_auth import login
 from .utils.assertions import (
     assert_valid_schema,
@@ -22,37 +25,53 @@ class Actions:
         return self.client.get('/v1/likes')
 
 
-def test_guest_user(client, quote):
-    test = Actions(client, quote)
+class TestViewer:
 
-    resp = test.like()
-    assert_valid_status_code(resp, 401)
+    @pytest.fixture(autouse=True)
+    def init(self, client, quote):
+        self.actions = Actions(client, quote)
 
-    resp = test.unlike()
-    assert_valid_status_code(resp, 401)
+    def test_like(self):
+        resp = self.actions.like()
+        assert_valid_status_code(resp, 401)
 
-    resp = test.get_favorites()
-    assert_valid_status_code(resp, 401)
+    def test_unlike(self):
+        resp = self.actions.unlike()
+        assert_valid_status_code(resp, 401)
+
+    def test_get_favorites(self):
+        resp = self.actions.get_favorites()
+        assert_valid_status_code(resp, 401)
 
 
-def test_user(client, quote, user):
-    login(client, user)
-    test = Actions(client, quote)
+class TestContributor:
 
-    resp = test.like()
-    assert_valid_status_code(resp, 200)
-    assert_valid_schema(resp, 'quote.json')
-    assert resp.json['data']['total_likes'] == 1
+    @pytest.fixture(autouse=True)
+    def init(self, client, quote, user):
+        login(client, user)
+        self.actions = Actions(client, quote)
 
-    resp = test.get_favorites()
-    assert_valid_status_code(resp, 200)
-    assert_valid_schema(resp, 'quotes.json')
-    assert resp.json['total'] == 1
+    def test_like(self):
+        resp = self.actions.like()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
 
-    resp = test.unlike()
-    assert_valid_status_code(resp, 200)
-    assert_valid_schema(resp, 'quote.json')
-    assert resp.json['data']['total_likes'] == 0
+        resp = self.actions.get_favorites()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
+        assert resp.json['total'] == 1
 
-    resp = test.get_favorites()
-    assert resp.json['total'] == 0
+    def test_unlike(self):
+        resp = self.actions.unlike()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
+
+        resp = self.actions.get_favorites()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
+        assert resp.json['total'] == 0
+
+    def test_get_favorites(self):
+        resp = self.actions.get_favorites()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
