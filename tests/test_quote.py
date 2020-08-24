@@ -1,155 +1,195 @@
-from .utils.assertions import (
-    assert_post_data_in_response,
-    assert_valid_schema,
-)
+# pylint: disable=attribute-defined-outside-init
+import pytest
 
-NEW_QUOTE = {
-    'author': 'Austin Freeman',
-    'quotation': 'Simplicity is the soul of efficiency.',
-    'status': 'published',
-}
+from .test_auth import login
+from .utils.assertions import assert_valid_schema, assert_valid_status_code
 
 
-def test_get_quotes(client):
-    resp = client.get('/v1/quotes')
-    resp_json = resp.json
+class Actions:
 
-    assert resp.status_code == 200
-    assert_valid_schema(resp_json, 'quotes.json')
+    def __init__(self, client, quote):
+        self.client = client
+        self.quote = quote
 
+    def get_quotes(self):
+        return self.client.get('/v1/quotes')
 
-def test_filter_quotes_by_status(client, quote_statuses):
-    for status in quote_statuses:
-        status_name = status.name
+    def filter_quotes(self):
+        pass
 
-        resp = client.get('/v1/quotes?status={}'.format(status_name))
-        resp_json = resp.json
-        resp_data = resp_json['data']
+    def get_quote(self):
+        return self.client.get(f'/v1/quotes/{self.quote.id}')
 
-        def has_expected_status(quote):
-            return quote['data']['status'] == status_name  # pylint: disable=cell-var-from-loop
+    def get_random_quote(self):
+        return self.client.get('/v1/quotes/random')
 
-        assert resp.status_code == 200
-        assert all(has_expected_status(quote) for quote in resp_data)
-        assert_valid_schema(resp_json, 'quotes.json')
+    def get_unidentified_quote(self):
+        return self.client.get('/v1/quotes/random/99')
 
+    def get_quote_contributor(self):
+        return self.client.get(f'/v1/quotes/{self.quote.id}/contributor')
 
-def test_filter_quotes_by_sumitted_by(client_admin, user):
-    resp = client_admin.get(f'/v1/quotes?submitted_by={user.name}')
-    resp_json = resp.json
-    resp_data = resp_json['data']
+    def search_quotes(self):
+        pass
 
-    assert resp.status_code == 200
-    assert_valid_schema(resp_json, 'quotes.json')
+    def create_quote(self):
+        post_data = {
+            'author': 'Austin Freeman',
+            'quotation': 'Simplicity is the soul of efficiency.',
+        }
 
-    for quote in resp_data:
-        quote_id = quote['data']['id']
-        resp = client_admin.get(f'/v1/quotes/{quote_id}/contributor')
-        resp_data = resp.json['data']
+        return self.client.post('/v1/quotes', data=post_data)
 
-        assert resp_data['name'] == user.name
+    def update_quote(self):
+        post_data = {
+            'author': 'Unknown',
+        }
 
+        return self.client.patch(f'/v1/quotes/{self.quote.id}', data=post_data)
 
-def test_filter_quotes_likes(client_admin, quote):
-    post_data = {
-        'id': quote.id
-    }
-
-    client_admin.post('/v1/likes', data=post_data)
-
-    resp = client_admin.get('/v1/quotes?likes=gt0')
-    resp_json = resp.json
-    resp_data = resp_json['data']
-
-    assert resp.status_code == 200
-    assert_valid_schema(resp_json, 'quotes.json')
-
-    for quote in resp_data:
-        assert quote['data']['total_likes'] >= 0
+    def delete_quote(self):
+        return self.client.delete(f'/v1/quotes/{self.quote.id}')
 
 
-def test_get_quote(client, quote):
-    resp = client.get('/v1/quotes/{0.id}'.format(quote))
+class TestViewer:
 
-    assert resp.status_code == 200
-    assert_valid_schema(resp.json, 'quote.json')
+    @pytest.fixture(autouse=True)
+    def init(self, client, quote):
+        self.actions = Actions(client, quote)
 
+    def test_get_quotes(self):
+        resp = self.actions.get_quotes()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
 
-def test_get_quote_random(client):
-    resp = client.get('/v1/quotes/random')
+    def test_filter_quotes(self):
+        pass
 
-    assert resp.status_code == 200
-    assert_valid_schema(resp.json, 'quote.json')
+    def test_get_quote(self):
+        resp = self.actions.get_quote()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
 
+    def test_get_random_quote(self):
+        resp = self.actions.get_random_quote()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
 
-def test_get_quote_not_found(client):
-    resp = client.get('/v1/quotes/99')
-    assert resp.status_code == 404
+    def test_get_unidentified_quote(self):
+        resp = self.actions.get_unidentified_quote()
+        assert_valid_status_code(resp, 404)
 
+    def test_get_quote_contributor(self):
+        resp = self.actions.get_quote_contributor()
+        assert_valid_status_code(resp, 401)
 
-def test_get_quote_contributor(client, quote):
-    resp = client.get('/v1/quotes/{0.id}/contributor'.format(quote))
-    assert resp.status_code == 401
+    def test_search_quotes(self):
+        pass
 
+    def test_create_quote(self):
+        resp = self.actions.create_quote()
+        assert_valid_status_code(resp, 401)
 
-def test_admin_get_quote_contributor(client_admin, quote):
-    resp = client_admin.get('/v1/quotes/{0.id}/contributor'.format(quote))
+    def test_update_quote(self):
+        resp = self.actions.update_quote()
+        assert_valid_status_code(resp, 401)
 
-    assert resp.status_code == 200
-    assert_valid_schema(resp.json, 'user.json')
-
-
-def test_search_quote(client, quote):
-    resp = client.get('/v1/quotes/?q={0.author}'.format(quote))
-    resp_json = resp.json
-    resp_data = resp_json['data']
-
-    assert resp.status_code == 200
-    assert any(result['data']['id'] == quote.id for result in resp_data)
-    assert_valid_schema(resp_json, 'quotes.json')
-
-
-def test_unauthorized_create_quote(client):
-    resp = client.post('/v1/quotes', data=NEW_QUOTE)
-    assert resp.status_code == 401
-
-
-def test_unauthorized_update_quote(client, quote):
-    post_data = {
-        'author': 'Linus Benedict Torvalds',
-        'quotation': quote.quotation,
-    }
-
-    resp = client.patch('/v1/quotes/{0.id}'.format(quote), data=post_data)
-    assert resp.status_code == 401
+    def test_delete_quote(self):
+        resp = self.actions.delete_quote()
+        assert_valid_status_code(resp, 401)
 
 
-def test_unauthorized_delete_quote(client, quote):
-    resp = client.delete('/v1/quotes/{0.id}'.format(quote))
-    assert resp.status_code == 401
+class TestContributor:
+    @pytest.fixture(autouse=True)
+    def init(self, client, user, quote):
+        login(client, user)
+        self.actions = Actions(client, quote)
+
+    def test_get_quotes(self):
+        resp = self.actions.get_quotes()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
+
+    def test_filter_quotes(self):
+        pass
+
+    def test_get_quote(self):
+        resp = self.actions.get_quote()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
+
+    def test_get_random_quote(self):
+        resp = self.actions.get_random_quote()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
+
+    def test_get_unidentified_quote(self):
+        resp = self.actions.get_unidentified_quote()
+        assert_valid_status_code(resp, 404)
+
+    def test_get_quote_contributor(self):
+        resp = self.actions.get_quote_contributor()
+        assert_valid_status_code(resp, 403)
+
+    def test_search_quotes(self):
+        pass
+
+    def test_create_quote(self):
+        resp = self.actions.create_quote()
+        assert_valid_status_code(resp, 201)
+
+    def test_update_quote(self):
+        resp = self.actions.update_quote()
+        assert_valid_status_code(resp, 403)
+
+    def test_delete_quote(self):
+        resp = self.actions.delete_quote()
+        assert_valid_status_code(resp, 403)
 
 
-def test_authorized_create_quote(client_admin):
-    resp = client_admin.post('/v1/quotes', data=NEW_QUOTE)
+class TestAdmin:
+    @pytest.fixture(autouse=True)
+    def init(self, client, user_admin, quote):
+        login(client, user_admin)
+        self.actions = Actions(client, quote)
 
-    assert resp.status_code == 201
-    assert_post_data_in_response(NEW_QUOTE, resp)
-    assert_valid_schema(resp.json, 'quote.json')
+    def test_get_quotes(self):
+        resp = self.actions.get_quotes()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
 
+    def test_filter_quotes(self):
+        pass
 
-def test_authorized_update_quote(client_admin, quote):
-    post_data = {
-        'author': 'Linus Benedict Torvalds',
-        'quotation': quote.quotation,
-    }
+    def test_get_quote(self):
+        resp = self.actions.get_quote()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
 
-    resp = client_admin.patch('/v1/quotes/{0.id}'.format(quote), data=post_data)  # noqa
+    def test_get_random_quote(self):
+        resp = self.actions.get_random_quote()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
 
-    assert resp.status_code == 200
-    assert_post_data_in_response(post_data, resp)
-    assert_valid_schema(resp.json, 'quote.json')
+    def test_get_unidentified_quote(self):
+        resp = self.actions.get_unidentified_quote()
+        assert_valid_status_code(resp, 404)
 
+    def test_get_quote_contributor(self):
+        resp = self.actions.get_quote_contributor()
+        assert_valid_status_code(resp, 200)
 
-def test_authorized_delete_quote(client_admin, quote):
-    resp = client_admin.delete('/v1/quotes/{0.id}'.format(quote))
-    assert resp.status_code == 204
+    def test_search_quotes(self):
+        pass
+
+    def test_create_quote(self):
+        resp = self.actions.create_quote()
+        assert_valid_status_code(resp, 201)
+
+    def test_update_quote(self):
+        resp = self.actions.update_quote()
+        assert_valid_status_code(resp, 200)
+
+    def test_delete_quote(self):
+        resp = self.actions.delete_quote()
+        assert_valid_status_code(resp, 204)
