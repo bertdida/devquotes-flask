@@ -30,16 +30,16 @@ class TestViewer:
     def init(self, client):
         self.actions = Actions(client)
 
+    def test_get_favorites(self):
+        resp = self.actions.get_favorites()
+        assert_valid_status_code(resp, 401)
+
     def test_like(self, quote):
         resp = self.actions.like(quote.id)
         assert_valid_status_code(resp, 401)
 
     def test_unlike(self, quote):
         resp = self.actions.unlike(quote.id)
-        assert_valid_status_code(resp, 401)
-
-    def test_get_favorites(self):
-        resp = self.actions.get_favorites()
         assert_valid_status_code(resp, 401)
 
 
@@ -50,14 +50,17 @@ class TestAuthenticatedUser:
         login(client, user)
         self.actions = Actions(client)
 
+    def test_get_favorites(self):
+        resp = self.actions.get_favorites()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
+
     def test_like(self, quote):
         resp = self.actions.like(quote.id)
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'quote.json')
 
         resp = self.actions.get_favorites()
-        assert_valid_status_code(resp, 200)
-        assert_valid_schema(resp, 'quotes.json')
         assert resp.json['total'] == 1
 
     def test_unlike(self, quote):
@@ -66,11 +69,4 @@ class TestAuthenticatedUser:
         assert_valid_schema(resp, 'quote.json')
 
         resp = self.actions.get_favorites()
-        assert_valid_status_code(resp, 200)
-        assert_valid_schema(resp, 'quotes.json')
         assert resp.json['total'] == 0
-
-    def test_get_favorites(self):
-        resp = self.actions.get_favorites()
-        assert_valid_status_code(resp, 200)
-        assert_valid_schema(resp, 'quotes.json')
