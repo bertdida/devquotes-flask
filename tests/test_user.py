@@ -1,25 +1,68 @@
-from .utils.assertions import assert_valid_schema
+# pylint: disable=attribute-defined-outside-init
+import pytest
+
+from .test_auth import login
+
+from .utils.assertions import assert_valid_schema, assert_valid_status_code
 
 
-def test_get_user(client, user_admin):
-    resp = client.get('/v1/users/{0.id}'.format(user_admin))
-    assert resp.status_code == 401
+class Actions:
+
+    def __init__(self, client):
+        self.client = client
+
+    def get_me(self):
+        return self.client.get('/v1/users/me')
+
+    def get_user(self, user_id):
+        return self.client.get(f'/v1/users/{user_id}')
 
 
-def test_admin_get_user(client_admin, user_admin):
-    resp = client_admin.get('/v1/users/{0.id}'.format(user_admin))
+class TestViewer:
 
-    assert resp.status_code == 200
-    assert_valid_schema(resp.json, 'user.json')
+    @pytest.fixture(autouse=True)
+    def init(self, client):
+        self.actions = Actions(client)
+
+    def get_me(self):
+        resp = self.actions.get_me()
+        assert_valid_status_code(resp, 401)
+
+    def test_get_user(self, user):
+        resp = self.actions.get_user(user.id)
+        assert_valid_status_code(resp, 401)
 
 
-def test_unauthorized_get_me(client):
-    resp = client.get('/v1/users/me')
-    assert resp.status_code == 401
+class TestContributor:
+
+    @pytest.fixture(autouse=True)
+    def init(self, client, user):
+        login(client, user)
+        self.actions = Actions(client)
+
+    def get_me(self):
+        resp = self.actions.get_me()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'user.json')
+
+    def test_get_user(self, user_admin):
+        resp = self.actions.get_user(user_admin.id)
+        assert_valid_status_code(resp, 403)
 
 
-def test_authorized_get_me(client_admin):
-    resp = client_admin.get('/v1/users/me')
+class TestAdmin:
 
-    assert resp.status_code == 200
-    assert_valid_schema(resp.json, 'user.json')
+    @pytest.fixture(autouse=True)
+    def init(self, client, user_admin):
+        login(client, user_admin)
+        self.actions = Actions(client)
+
+    def get_me(self):
+        resp = self.actions.get_me()
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'user.json')
+
+    def test_get_user(self, user):
+        resp = self.actions.get_user(user.id)
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'user.json')
