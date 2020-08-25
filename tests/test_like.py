@@ -2,10 +2,7 @@
 import pytest
 
 from .test_auth import login
-from .utils.assertions import (
-    assert_valid_schema,
-    assert_valid_status_code
-)
+from .utils.assertions import assert_valid_schema, assert_valid_status_code
 
 
 class Actions:
