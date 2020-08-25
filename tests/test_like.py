@@ -44,7 +44,7 @@ class TestViewer:
         assert_valid_status_code(resp, 401)
 
 
-class TestContributor:
+class TestAuthenticatedUser:
 
     @pytest.fixture(autouse=True)
     def init(self, client, quote, user):
