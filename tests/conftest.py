@@ -4,7 +4,6 @@ from contextlib import contextmanager
 
 import pytest
 import testing.postgresql as postgresql
-from flask_jwt_extended import create_access_token, create_refresh_token
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm.mapper import configure_mappers
 
@@ -134,23 +133,3 @@ def setup_and_teardown_quote():
 @pytest.fixture(name='client', scope='function')
 def setup_and_teardown_client(app):
     return app.test_client()
-
-
-@pytest.fixture(name='client_admin', scope='module')
-def setup_and_teardown_client_admin(app, user_admin):
-    client = app.test_client()
-
-    identity = {
-        'firebase_user_id': user_admin.firebase_user_id,
-        'is_admin': user_admin.is_admin,
-        'id': user_admin.id,
-    }
-
-    access_token = create_access_token(identity)
-    refresh_token = create_refresh_token(identity)
-
-    client.set_cookie('localhost', 'access_token_cookie', access_token)
-    client.set_cookie('localhost', 'refresh_token_cookie', refresh_token)
-
-    yield client
-    client.cookie_jar.clear()
