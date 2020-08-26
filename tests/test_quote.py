@@ -7,9 +7,8 @@ from .utils.assertions import assert_valid_schema, assert_valid_status_code
 
 class Actions:
 
-    def __init__(self, client, quote):
+    def __init__(self, client):
         self.client = client
-        self.quote = quote
 
     def get_quotes(self):
         return self.client.get('/v1/quotes')
@@ -17,8 +16,8 @@ class Actions:
     def filter_quotes(self):
         pass
 
-    def get_quote(self):
-        return self.client.get(f'/v1/quotes/{self.quote.id}')
+    def get_quote(self, quote_id):
+        return self.client.get(f'/v1/quotes/{quote_id}')
 
     def get_random_quote(self):
         return self.client.get('/v1/quotes/random')
@@ -26,8 +25,8 @@ class Actions:
     def get_unidentified_quote(self):
         return self.client.get('/v1/quotes/random/99')
 
-    def get_quote_contributor(self):
-        return self.client.get(f'/v1/quotes/{self.quote.id}/contributor')
+    def get_quote_contributor(self, quote_id):
+        return self.client.get(f'/v1/quotes/{quote_id}/contributor')
 
     def search_quotes(self):
         pass
@@ -40,22 +39,22 @@ class Actions:
 
         return self.client.post('/v1/quotes', data=post_data)
 
-    def update_quote(self):
+    def update_quote(self, quote_id):
         post_data = {
             'author': 'Unknown',
         }
 
-        return self.client.patch(f'/v1/quotes/{self.quote.id}', data=post_data)
+        return self.client.patch(f'/v1/quotes/{quote_id}', data=post_data)
 
-    def delete_quote(self):
-        return self.client.delete(f'/v1/quotes/{self.quote.id}')
+    def delete_quote(self, quote_id):
+        return self.client.delete(f'/v1/quotes/{quote_id}')
 
 
 class TestViewer:
 
     @pytest.fixture(autouse=True)
-    def init(self, client, quote):
-        self.actions = Actions(client, quote)
+    def init(self, client):
+        self.actions = Actions(client)
 
     def test_get_quotes(self):
         resp = self.actions.get_quotes()
@@ -65,8 +64,8 @@ class TestViewer:
     def test_filter_quotes(self):
         pass
 
-    def test_get_quote(self):
-        resp = self.actions.get_quote()
+    def test_get_quote(self, quote):
+        resp = self.actions.get_quote(quote.id)
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'quote.json')
 
@@ -79,8 +78,8 @@ class TestViewer:
         resp = self.actions.get_unidentified_quote()
         assert_valid_status_code(resp, 404)
 
-    def test_get_quote_contributor(self):
-        resp = self.actions.get_quote_contributor()
+    def test_get_quote_contributor(self, quote):
+        resp = self.actions.get_quote_contributor(quote.id)
         assert_valid_status_code(resp, 401)
 
     def test_search_quotes(self):
@@ -90,20 +89,20 @@ class TestViewer:
         resp = self.actions.create_quote()
         assert_valid_status_code(resp, 401)
 
-    def test_update_quote(self):
-        resp = self.actions.update_quote()
+    def test_update_quote(self, quote):
+        resp = self.actions.update_quote(quote.id)
         assert_valid_status_code(resp, 401)
 
-    def test_delete_quote(self):
-        resp = self.actions.delete_quote()
+    def test_delete_quote(self, quote):
+        resp = self.actions.delete_quote(quote.id)
         assert_valid_status_code(resp, 401)
 
 
 class TestContributor:
     @pytest.fixture(autouse=True)
-    def init(self, client, user, quote):
+    def init(self, client, user):
         login(client, user)
-        self.actions = Actions(client, quote)
+        self.actions = Actions(client)
 
     def test_get_quotes(self):
         resp = self.actions.get_quotes()
@@ -113,8 +112,8 @@ class TestContributor:
     def test_filter_quotes(self):
         pass
 
-    def test_get_quote(self):
-        resp = self.actions.get_quote()
+    def test_get_quote(self, quote):
+        resp = self.actions.get_quote(quote.id)
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'quote.json')
 
@@ -127,8 +126,8 @@ class TestContributor:
         resp = self.actions.get_unidentified_quote()
         assert_valid_status_code(resp, 404)
 
-    def test_get_quote_contributor(self):
-        resp = self.actions.get_quote_contributor()
+    def test_get_quote_contributor(self, quote):
+        resp = self.actions.get_quote_contributor(quote.id)
         assert_valid_status_code(resp, 403)
 
     def test_search_quotes(self):
@@ -138,20 +137,20 @@ class TestContributor:
         resp = self.actions.create_quote()
         assert_valid_status_code(resp, 201)
 
-    def test_update_quote(self):
-        resp = self.actions.update_quote()
+    def test_update_quote(self, quote):
+        resp = self.actions.update_quote(quote.id)
         assert_valid_status_code(resp, 403)
 
-    def test_delete_quote(self):
-        resp = self.actions.delete_quote()
+    def test_delete_quote(self, quote):
+        resp = self.actions.delete_quote(quote.id)
         assert_valid_status_code(resp, 403)
 
 
 class TestAdmin:
     @pytest.fixture(autouse=True)
-    def init(self, client, user_admin, quote):
+    def init(self, client, user_admin):
         login(client, user_admin)
-        self.actions = Actions(client, quote)
+        self.actions = Actions(client)
 
     def test_get_quotes(self):
         resp = self.actions.get_quotes()
@@ -161,8 +160,8 @@ class TestAdmin:
     def test_filter_quotes(self):
         pass
 
-    def test_get_quote(self):
-        resp = self.actions.get_quote()
+    def test_get_quote(self, quote):
+        resp = self.actions.get_quote(quote.id)
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'quote.json')
 
@@ -175,8 +174,8 @@ class TestAdmin:
         resp = self.actions.get_unidentified_quote()
         assert_valid_status_code(resp, 404)
 
-    def test_get_quote_contributor(self):
-        resp = self.actions.get_quote_contributor()
+    def test_get_quote_contributor(self, quote):
+        resp = self.actions.get_quote_contributor(quote.id)
         assert_valid_status_code(resp, 200)
 
     def test_search_quotes(self):
@@ -186,10 +185,10 @@ class TestAdmin:
         resp = self.actions.create_quote()
         assert_valid_status_code(resp, 201)
 
-    def test_update_quote(self):
-        resp = self.actions.update_quote()
+    def test_update_quote(self, quote):
+        resp = self.actions.update_quote(quote.id)
         assert_valid_status_code(resp, 200)
 
-    def test_delete_quote(self):
-        resp = self.actions.delete_quote()
+    def test_delete_quote(self, quote):
+        resp = self.actions.delete_quote(quote.id)
         assert_valid_status_code(resp, 204)
