@@ -137,6 +137,7 @@ class TestContributor:
     def test_create_quote(self):
         resp = self.actions.create_quote()
         assert_valid_status_code(resp, 201)
+        assert_valid_schema(resp, 'quote.json')
 
     def test_update_quote(self, quote):
         resp = self.actions.update_quote(quote.id)
@@ -178,6 +179,7 @@ class TestAdmin:
     def test_get_quote_contributor(self, quote):
         resp = self.actions.get_quote_contributor(quote.id)
         assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'user.json')
 
     def test_search_quotes(self):
         pass
@@ -185,10 +187,12 @@ class TestAdmin:
     def test_create_quote(self):
         resp = self.actions.create_quote()
         assert_valid_status_code(resp, 201)
+        assert_valid_schema(resp, 'quote.json')
 
     def test_update_quote(self, quote):
         resp = self.actions.update_quote(quote.id)
         assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
 
     def test_delete_quote(self, quote):
         resp = self.actions.delete_quote(quote.id)
