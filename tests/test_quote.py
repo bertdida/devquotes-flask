@@ -13,8 +13,9 @@ class Actions:
     def get_quotes(self):
         return self.client.get('/v1/quotes')
 
-    def filter_quotes(self):
-        pass
+    def filter_quotes(self, **filters):
+        params = '&'.join(f'{k}={v}' for k, v in filters.items())
+        return self.client.get(f'/v1/quotes?{params}')
 
     def get_quote(self, quote_id):
         return self.client.get(f'/v1/quotes/{quote_id}')
