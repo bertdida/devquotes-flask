@@ -29,8 +29,8 @@ class Actions:
     def get_quote_contributor(self, quote_id):
         return self.client.get(f'/v1/quotes/{quote_id}/contributor')
 
-    def search_quotes(self):
-        pass
+    def search_quotes(self, query):
+        return self.client.get(f'/v1/quotes?q={query}')
 
     def create_quote(self):
         post_data = {
