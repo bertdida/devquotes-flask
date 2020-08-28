@@ -83,8 +83,11 @@ class TestViewer:
         resp = self.actions.get_quote_contributor(quote.id)
         assert_valid_status_code(resp, 401)
 
-    def test_search_quotes(self):
-        pass
+    def test_search_quotes(self, quote):
+        resp = self.actions.search_quotes(quote.quotation)
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
+        assert resp.json['total'] >= 1
 
     def test_create_quote(self):
         resp = self.actions.create_quote()
@@ -131,8 +134,11 @@ class TestContributor:
         resp = self.actions.get_quote_contributor(quote.id)
         assert_valid_status_code(resp, 403)
 
-    def test_search_quotes(self):
-        pass
+    def test_search_quotes(self, quote):
+        resp = self.actions.search_quotes(quote.quotation)
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
+        assert resp.json['total'] >= 1
 
     def test_create_quote(self):
         resp = self.actions.create_quote()
@@ -181,8 +187,11 @@ class TestAdmin:
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'user.json')
 
-    def test_search_quotes(self):
-        pass
+    def test_search_quotes(self, quote):
+        resp = self.actions.search_quotes(quote.quotation)
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
+        assert resp.json['total'] >= 1
 
     def test_create_quote(self):
         resp = self.actions.create_quote()
