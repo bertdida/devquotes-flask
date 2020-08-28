@@ -115,11 +115,6 @@ def setup_and_teardown_user_admin():
     yield User.get_by(first=True, is_admin=True)
 
 
-@pytest.fixture(name='quote_statuses', scope='module')
-def setup_and_teardown_quote_statuses():
-    yield QuoteStatus.query.all()
-
-
 @pytest.fixture(name='quotes', scope='module')
 def setup_and_teardown_quotes():
     yield Quote.query.all()
