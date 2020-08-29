@@ -44,7 +44,7 @@ class Quotes(Resource):
         status_choices = [status.name for status in statuses]
 
         parser = reqparse.RequestParser()
-        parser.add_argument('q', location='args')
+        parser.add_argument('query', location='args')
         parser.add_argument('page', location='args', type=int)
         parser.add_argument('per_page', location='args', type=int)
         parser.add_argument('status', location='args', choices=status_choices)
@@ -52,7 +52,7 @@ class Quotes(Resource):
         parser.add_argument('likes', location='args', type=_valid_likes_pattern)  # noqa
         args = parser.parse_args()
 
-        search_query = args['q']
+        search_query = args['query']
         page = args['page']
         per_page = args['per_page']
         status = args['status']
