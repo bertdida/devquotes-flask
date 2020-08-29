@@ -1,3 +1,4 @@
+import re
 from os.path import join, dirname
 
 import jsonref
@@ -11,6 +12,14 @@ def assert_valid_schema(response, schema_file):
 
 def assert_valid_status_code(response, status_code):
     assert response.status_code == status_code
+
+
+def assert_valid_search_results(response, query):
+    pattern = re.compile(query, re.IGNORECASE)
+
+    for quote in response.json['data']:
+        assert pattern.search(quote['data']['quotation']) or \
+            pattern.search(quote['data']['author'])
 
 
 def _load_json_schema(filename):
