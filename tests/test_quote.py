@@ -2,7 +2,11 @@
 import pytest
 
 from .test_auth import login
-from .utils.assertions import assert_valid_schema, assert_valid_status_code
+from .utils.assertions import (
+    assert_valid_schema,
+    assert_valid_status_code,
+    assert_valid_search_results,
+)
 
 
 class Actions:
@@ -30,7 +34,7 @@ class Actions:
         return self.client.get(f'/v1/quotes/{quote_id}/contributor')
 
     def search_quotes(self, query):
-        return self.client.get(f'/v1/quotes?q={query}')
+        return self.client.get(f'/v1/quotes?query={query}')
 
     def create_quote(self):
         post_data = {
@@ -87,6 +91,7 @@ class TestViewer:
         resp = self.actions.search_quotes(quote.quotation)
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'quotes.json')
+        assert_valid_search_results(resp, quote.quotation)
         assert resp.json['total'] >= 1
 
     def test_create_quote(self):
@@ -137,7 +142,7 @@ class TestContributor:
     def test_search_quotes(self, quote):
         resp = self.actions.search_quotes(quote.quotation)
         assert_valid_status_code(resp, 200)
-        assert_valid_schema(resp, 'quotes.json')
+        assert_valid_search_results(resp, quote.quotation)
         assert resp.json['total'] >= 1
 
     def test_create_quote(self):
@@ -191,6 +196,7 @@ class TestAdmin:
         resp = self.actions.search_quotes(quote.quotation)
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'quotes.json')
+        assert_valid_search_results(resp, quote.quotation)
         assert resp.json['total'] >= 1
 
     def test_create_quote(self):
