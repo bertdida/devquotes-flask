@@ -44,11 +44,7 @@ class Actions:
 
         return self.client.post('/v1/quotes', data=post_data)
 
-    def update_quote(self, quote_id):
-        post_data = {
-            'author': 'Unknown',
-        }
-
+    def update_quote(self, quote_id, post_data):
         return self.client.patch(f'/v1/quotes/{quote_id}', data=post_data)
 
     def delete_quote(self, quote_id):
@@ -99,7 +95,9 @@ class TestViewer:
         assert_valid_status_code(resp, 401)
 
     def test_update_quote(self, quote):
-        resp = self.actions.update_quote(quote.id)
+        post_data = {'author': 'unknown'}
+
+        resp = self.actions.update_quote(quote.id, post_data)
         assert_valid_status_code(resp, 401)
 
     def test_delete_quote(self, quote):
@@ -151,7 +149,9 @@ class TestContributor:
         assert_valid_schema(resp, 'quote.json')
 
     def test_update_quote(self, quote):
-        resp = self.actions.update_quote(quote.id)
+        post_data = {'author': 'unknown'}
+
+        resp = self.actions.update_quote(quote.id, post_data)
         assert_valid_status_code(resp, 403)
 
     def test_delete_quote(self, quote):
@@ -205,7 +205,9 @@ class TestAdmin:
         assert_valid_schema(resp, 'quote.json')
 
     def test_update_quote(self, quote):
-        resp = self.actions.update_quote(quote.id)
+        post_data = {'author': 'unknown'}
+
+        resp = self.actions.update_quote(quote.id, post_data)
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'quote.json')
 
