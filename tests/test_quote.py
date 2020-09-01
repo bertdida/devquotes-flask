@@ -47,6 +47,10 @@ class Actions:
     def update_quote(self, quote_id, post_data):
         return self.client.patch(f'/v1/quotes/{quote_id}', data=post_data)
 
+    def publish_quote(self, quote_id):
+        post_data = {'status': 'published'}
+        return self.client.patch(f'/v1/quotes/{quote_id}', data=post_data)
+
     def delete_quote(self, quote_id):
         return self.client.delete(f'/v1/quotes/{quote_id}')
 
@@ -98,6 +102,10 @@ class TestViewer:
         post_data = {'author': 'unknown'}
 
         resp = self.actions.update_quote(quote.id, post_data)
+        assert_valid_status_code(resp, 401)
+
+    def test_publish_quote(self, quote):
+        resp = self.actions.publish_quote(quote.id)
         assert_valid_status_code(resp, 401)
 
     def test_delete_quote(self, quote):
@@ -154,6 +162,10 @@ class TestContributor:
         resp = self.actions.update_quote(quote.id, post_data)
         assert_valid_status_code(resp, 403)
 
+    def test_publish_quote(self, quote):
+        resp = self.actions.publish_quote(quote.id)
+        assert_valid_status_code(resp, 403)
+
     def test_delete_quote(self, quote):
         resp = self.actions.delete_quote(quote.id)
         assert_valid_status_code(resp, 403)
@@ -208,6 +220,11 @@ class TestAdmin:
         post_data = {'author': 'unknown'}
 
         resp = self.actions.update_quote(quote.id, post_data)
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quote.json')
+
+    def test_publish_quote(self, quote):
+        resp = self.actions.publish_quote(quote.id)
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'quote.json')
 
