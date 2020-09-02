@@ -49,7 +49,7 @@ class Actions:
 
     def publish_quote(self, quote_id):
         post_data = {'status': 'published'}
-        return self.client.patch(f'/v1/quotes/{quote_id}', data=post_data)
+        return self.update_quote(quote_id, post_data)
 
     def delete_quote(self, quote_id):
         return self.client.delete(f'/v1/quotes/{quote_id}')
