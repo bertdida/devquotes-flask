@@ -6,5 +6,9 @@
   {
     "name": "pending_review",
     "display_name": "Pending Review"
+  },
+  {
+    "name": "irrelevant",
+    "display_name": "Irrelevant"
   }
 ]
