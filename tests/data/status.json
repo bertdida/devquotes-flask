@@ -8,7 +8,7 @@
     "display_name": "Pending Review"
   },
   {
-    "name": "irrelevant",
-    "display_name": "Irrelevant"
+    "name": "spam",
+    "display_name": "Spam"
   }
 ]
