@@ -51,6 +51,10 @@ class Actions:
         post_data = {'status': 'published'}
         return self.update_quote(quote_id, post_data)
 
+    def flag_quote_as_spam(self, quote_id):
+        post_data = {'status': 'spam'}
+        return self.update_quote(quote_id, post_data)
+
     def delete_quote(self, quote_id):
         return self.client.delete(f'/v1/quotes/{quote_id}')
 
@@ -106,6 +110,10 @@ class TestViewer:
 
     def test_publish_quote(self, quote):
         resp = self.actions.publish_quote(quote.id)
+        assert_valid_status_code(resp, 401)
+
+    def test_flag_quote_as_spam(self, quote):
+        resp = self.actions.flag_quote_as_spam(quote.id)
         assert_valid_status_code(resp, 401)
 
     def test_delete_quote(self, quote):
@@ -164,6 +172,10 @@ class TestContributor:
 
     def test_publish_quote(self, quote):
         resp = self.actions.publish_quote(quote.id)
+        assert_valid_status_code(resp, 403)
+
+    def test_flag_quote_as_spam(self, quote):
+        resp = self.actions.flag_quote_as_spam(quote.id)
         assert_valid_status_code(resp, 403)
 
     def test_delete_quote(self, quote):
@@ -227,6 +239,10 @@ class TestAdmin:
         resp = self.actions.publish_quote(quote.id)
         assert_valid_status_code(resp, 200)
         assert_valid_schema(resp, 'quote.json')
+
+    def test_flag_quote_as_spam(self, quote):
+        resp = self.actions.flag_quote_as_spam(quote.id)
+        assert_valid_status_code(resp, 200)
 
     def test_delete_quote(self, quote):
         resp = self.actions.delete_quote(quote.id)
