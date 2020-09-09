@@ -58,6 +58,10 @@ class Actions:
     def delete_quote(self, quote_id):
         return self.client.delete(f'/v1/quotes/{quote_id}')
 
+    def delete_quotes(self, *quote_ids):
+        params = ','.join(str(i) for i in quote_ids)
+        return self.client.delete(f'/v1/quotes/?ids={params}')
+
 
 class TestViewer:
 
@@ -120,6 +124,11 @@ class TestViewer:
         resp = self.actions.delete_quote(quote.id)
         assert_valid_status_code(resp, 401)
 
+    def test_delete_quotes(self, quotes):
+        ids = [q.id for q in quotes]
+        resp = self.actions.delete_quotes(*ids)
+        assert_valid_status_code(resp, 401)
+
 
 class TestContributor:
     @pytest.fixture(autouse=True)
@@ -180,6 +189,11 @@ class TestContributor:
 
     def test_delete_quote(self, quote):
         resp = self.actions.delete_quote(quote.id)
+        assert_valid_status_code(resp, 403)
+
+    def test_delete_quotes(self, quotes):
+        ids = [q.id for q in quotes]
+        resp = self.actions.delete_quotes(*ids)
         assert_valid_status_code(resp, 403)
 
 
@@ -247,3 +261,8 @@ class TestAdmin:
     def test_delete_quote(self, quote):
         resp = self.actions.delete_quote(quote.id)
         assert_valid_status_code(resp, 204)
+
+    def test_delete_quotes(self, quotes):
+        ids = [q.id for q in quotes]
+        resp = self.actions.delete_quotes(*ids)
+        assert_valid_status_code(resp, 200)
