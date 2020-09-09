@@ -18,6 +18,7 @@ from .fields import quote_fields, quotes_fields, user_fields
 from .utils import admin_only, get_quote_or_404
 
 LIKES_FILTER_RE = re.compile(r'^(?P<operator>[g|l|e]t)(?P<value>\d*)$')
+TOTAL_ALLOWED_IDS = 50
 
 
 def _non_empty_string(string):
@@ -31,6 +32,21 @@ def _valid_likes_pattern(string):
     if not LIKES_FILTER_RE.match(string):
         pattern = LIKES_FILTER_RE.pattern
         raise ValueError(f'Invalid pattern, must follow {pattern}')
+
+    return string
+
+
+def _ids(string):
+    ids = set(string.split(','))
+
+    if not all(i.isdigit() for i in ids):
+        raise ValueError('Invalid type, each id must be type of integer')
+
+    if len(ids) > TOTAL_ALLOWED_IDS:
+        raise ValueError(
+            f'A total of {TOTAL_ALLOWED_IDS} '
+            f'{"ids are" if TOTAL_ALLOWED_IDS > 1 else "id is"} allowed'
+        )
 
     return string
 
@@ -124,6 +140,28 @@ class Quotes(Resource):
             return db_client.create_quote(args), 201
         except IntegrityError:
             abort(409)
+
+    @jwt_required
+    @admin_only
+    def delete(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('ids', location='args', type=_ids)
+        args = parser.parse_args()
+
+        ids = args['ids']
+        results = []
+
+        for quote_id in ids.split(','):
+            quote = db_client.get_quote(quote_id)
+            success = False
+
+            if quote:
+                success = True
+                db_client.delete_quote(quote)
+
+            results.append({'id': quote_id, 'success': success})
+
+        return results
 
 
 class Quote(Resource):
