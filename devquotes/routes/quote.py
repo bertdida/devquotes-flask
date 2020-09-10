@@ -159,7 +159,7 @@ class Quotes(Resource):
                 success = True
                 db_client.delete_quote(quote)
 
-            results.append({'id': quote_id, 'success': success})
+            results.append({'id': int(quote_id), 'success': success})
 
         return results
 
