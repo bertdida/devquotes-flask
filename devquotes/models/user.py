@@ -1,8 +1,12 @@
+"""This module defines the structure of user table."""
+
 from . import db
 from .mixins import BaseMixin
 
 
 class User(BaseMixin, db.Model):
+    """A model to store user related data."""
+
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)

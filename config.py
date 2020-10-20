@@ -1,7 +1,13 @@
+"""This module defines the app's configuration classes."""
+
 import os
+
+# pylint: disable=too-few-public-methods
 
 
 class Config:
+    """Default configurations."""
+
     SECRET_KEY = os.environ['SECRET_KEY']
 
     JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']
@@ -21,6 +27,8 @@ class Config:
 
 
 class Development(Config):
+    """Development configurations."""
+
     ENV = 'development'
     DEBUG = True
     SERVER_NAME = os.environ.get('SERVER_NAME')
@@ -30,6 +38,8 @@ class Development(Config):
 
 
 class Production(Config):
+    """Production configurations."""
+
     ENV = 'production'
     DEBUG = False
 
@@ -41,6 +51,8 @@ class Production(Config):
 
 
 class Testing(Config):
+    """Testing configurations."""
+
     TESTING = True
     BCRYPT_LOG_ROUNDS = 4
     JWT_COOKIE_SECURE = False

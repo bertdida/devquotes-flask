@@ -1,7 +1,11 @@
+"""This module contains authorization related tests."""
+
 from unittest import mock
 
 
 def login(client, user):
+    """Helper for logging in user."""
+
     with mock.patch('devquotes.routes.auth.auth.verify_id_token') as magic_mock:
         magic_mock.return_value = {
             'user_id': user.firebase_user_id,
@@ -14,10 +18,14 @@ def login(client, user):
 
 
 def logout(client):
+    """Helper for logging out user."""
+
     return client.post('/v1/auth/revoke')
 
 
 def test_token(client, user):
+    """Tests login."""
+
     resp = login(client, user)
     cookie_names = [cookie.name for cookie in client.cookie_jar]
 
@@ -27,6 +35,8 @@ def test_token(client, user):
 
 
 def test_refresh(client, user):
+    """Tests refreshing token."""
+
     login(client, user)
 
     resp = client.post('/v1/auth/refresh')
@@ -38,6 +48,8 @@ def test_refresh(client, user):
 
 
 def test_revoke(client, user):
+    """Tests revoking token."""
+
     login(client, user)
 
     resp = logout(client)

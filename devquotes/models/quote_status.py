@@ -1,8 +1,12 @@
+"""This module defines the structure of quote_status table."""
+
 from . import db
 from .mixins import BaseMixin
 
 
 class QuoteStatus(db.Model, BaseMixin):
+    """A model to store quote status related data."""
+
     __tablename__ = 'quote_status'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)

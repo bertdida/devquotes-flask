@@ -1,3 +1,5 @@
+"""Runs the application."""
+
 import json
 import os
 
@@ -6,16 +8,18 @@ from sqlalchemy.exc import DataError, IntegrityError
 
 from devquotes import create_app
 from devquotes.models import db
-from devquotes.models.like import Like  # pylint: disable=unused-import
-from devquotes.models.quote import Quote  # pylint: disable=unused-import
-from devquotes.models.quote_status import QuoteStatus  # pylint: disable=unused-import
-from devquotes.models.user import User  # pylint: disable=unused-import
+from devquotes.models.like import Like
+from devquotes.models.quote import Quote
+from devquotes.models.quote_status import QuoteStatus
+from devquotes.models.user import User
 
 app = create_app(config_class=os.environ['CONFIG_CLASS'])
 
 
 @app.shell_context_processor
 def make_shell_context():
+    """Registers relevant shell contexts."""
+
     return {
         'db': db,
         'User': User,
@@ -27,24 +31,25 @@ def make_shell_context():
 
 @app.before_first_request
 def create_database_tables():
+    """Creates database tables."""
+
     db.configure_mappers()
     db.create_all()
 
 
 @app.cli.command()
-@click.option(
-    '--filename',
-    required=True,
-    type=click.File('rb'),
-    help='The JSON file to parse.'
-)
+@click.option('--filename', required=True, type=click.File('rb'), help='The JSON file to parse.')
 def seed(filename):
-    """Populate `quote` table in database."""
+    """Populates quote table in database.
+
+    Args:
+        filename (string): The JSON file's name.
+    """
 
     try:
         quotes = json.load(filename)
-    except json.decoder.JSONDecodeError as e:
-        raise click.BadParameter(e)
+    except json.decoder.JSONDecodeError as error:
+        raise click.BadParameter(error)
 
     for data in quotes:
         try:
@@ -53,7 +58,9 @@ def seed(filename):
             pass
 
 
-if __name__ == '__main__':
+def main():
+    """The starting point of the app."""
+
     in_dev = app.config.get('ENV') == 'development'
     server_name = app.config.get('SERVER_NAME')
 
@@ -67,3 +74,7 @@ if __name__ == '__main__':
             ssl_context = (cert_file, pkey_file)
 
     app.run(ssl_context=ssl_context)
+
+
+if __name__ == '__main__':
+    main()

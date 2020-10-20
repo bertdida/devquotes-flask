@@ -1,3 +1,5 @@
+"""This module contains the quotes API."""
+
 import re
 
 from flask_jwt_extended import (
@@ -21,41 +23,15 @@ LIKES_FILTER_RE = re.compile(r'^(?P<operator>[g|l|e]t)(?P<value>\d*)$')
 TOTAL_ALLOWED_IDS = 50
 
 
-def _non_empty_string(string):
-    if not string:
-        raise ValueError('Must not be an empty string')
-
-    return string
-
-
-def _valid_likes_pattern(string):
-    if not LIKES_FILTER_RE.match(string):
-        pattern = LIKES_FILTER_RE.pattern
-        raise ValueError(f'Invalid pattern, must follow {pattern}')
-
-    return string
-
-
-def _ids(string):
-    ids = set(string.split(','))
-
-    if not all(i.isdigit() for i in ids):
-        raise ValueError('Invalid type, each id must be type of integer')
-
-    if len(ids) > TOTAL_ALLOWED_IDS:
-        raise ValueError(
-            f'A total of {TOTAL_ALLOWED_IDS} '
-            f'{"ids are" if TOTAL_ALLOWED_IDS > 1 else "id is"} allowed'
-        )
-
-    return string
-
-
 class Quotes(Resource):
+    """Resource for quotes."""
 
+    @classmethod
     @marshal_with(quotes_fields)
     @jwt_optional
-    def get(self):
+    def get(cls):
+        """Returns quotes with regards to the given query parameters."""
+
         statuses = db_client.get_quote_statuses()
         status_choices = [status.name for status in statuses]
 
@@ -65,7 +41,9 @@ class Quotes(Resource):
         parser.add_argument('per_page', location='args', type=int)
         parser.add_argument('status', location='args', choices=status_choices)
         parser.add_argument('submitted_by', location='args')
-        parser.add_argument('likes', location='args', type=_valid_likes_pattern)  # noqa
+        parser.add_argument(
+            'likes', location='args', type=_valid_likes_pattern
+        )
         args = parser.parse_args()
 
         search_query = args['query']
@@ -89,9 +67,12 @@ class Quotes(Resource):
 
         return db_client.get_quotes(page, per_page, user_id, **filters)
 
+    @classmethod
     @marshal_with(quote_fields)
     @jwt_required
-    def post(self):
+    def post(cls):
+        """Creates quote."""
+
         statuses = db_client.get_quote_statuses()
         status_choices = [status.name for status in statuses]
 
@@ -141,9 +122,12 @@ class Quotes(Resource):
         except IntegrityError:
             abort(409)
 
+    @classmethod
     @jwt_required
     @admin_only
-    def delete(self):
+    def delete(cls):
+        """Deletes quote."""
+
         parser = reqparse.RequestParser()
         parser.add_argument('ids', location='args', type=_ids)
         args = parser.parse_args()
@@ -165,19 +149,26 @@ class Quotes(Resource):
 
 
 class Quote(Resource):
+    """Resource for quote."""
 
+    @classmethod
     @marshal_with(quote_fields)
     @jwt_optional
-    def get(self, quote_id):
+    def get(cls, quote_id):
+        """Returns quote by id."""
+
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
         return get_quote_or_404(quote_id, user_id)
 
+    @classmethod
     @marshal_with(quote_fields)
     @jwt_required
     @admin_only
-    def patch(self, quote_id):
+    def patch(cls, quote_id):
+        """Updates quote by id."""
+
         statuses = db_client.get_quote_statuses()
         status_choices = [status.name for status in statuses]
 
@@ -223,9 +214,12 @@ class Quote(Resource):
 
         return db_client.update_quote(quote, args)
 
+    @classmethod
     @jwt_required
     @admin_only
-    def delete(self, quote_id):
+    def delete(cls, quote_id):
+        """Deletes quote by id."""
+
         current_user = get_jwt_identity()
         quote = get_quote_or_404(quote_id, current_user['id'])
         db_client.delete_quote(quote)
@@ -234,10 +228,14 @@ class Quote(Resource):
 
 
 class Random(Resource):
+    """Resource for random quote."""
 
+    @classmethod
     @marshal_with(quote_fields)
     @jwt_optional
-    def get(self):
+    def get(cls):
+        """Returns a random quote."""
+
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
 
@@ -249,10 +247,81 @@ class Random(Resource):
 
 
 class Contributor(Resource):
+    """Resource for quote's contributor."""
 
+    @classmethod
     @marshal_with(user_fields)
     @jwt_required
     @admin_only
-    def get(self, quote_id):
+    def get(cls, quote_id):
+        """Returns the contributor of the given quote id."""
+
         quote = get_quote_or_404(quote_id)
         return quote.contributor
+
+
+def _non_empty_string(string):
+    """A helper to check if the given string is empty.
+
+    Args:
+        string (string): The string to check.
+
+    Raises:
+        ValueError: This will be raised if the string is empty.
+
+    Returns:
+        string: The string.
+    """
+
+    if not string:
+        raise ValueError('Must not be an empty string')
+
+    return string
+
+
+def _valid_likes_pattern(string):
+    """A helper to check if the given string is a valid like query pattern.
+
+    Args:
+        string (string): The string to check.
+
+    Raises:
+        ValueError: This will be raised if the string is an invalid pattern.
+
+    Returns:
+        string: The string.
+    """
+
+    if not LIKES_FILTER_RE.match(string):
+        pattern = LIKES_FILTER_RE.pattern
+        raise ValueError(f'Invalid pattern, must follow {pattern}')
+
+    return string
+
+
+def _ids(string):
+    """A helper to check if the given comma-separated ids are all integer
+    and does not exceed the allowed total ids.
+
+    Args:
+        string (string): The string to check.
+
+    Raises:
+        ValueError: This will be raised with an appropriate message.
+
+    Returns:
+        string: The string.
+    """
+
+    ids = set(string.split(','))
+
+    if not all(i.isdigit() for i in ids):
+        raise ValueError('Invalid type, each id must be type of integer')
+
+    if len(ids) > TOTAL_ALLOWED_IDS:
+        raise ValueError(
+            f'A total of {TOTAL_ALLOWED_IDS} '
+            f'{"ids are" if TOTAL_ALLOWED_IDS > 1 else "id is"} allowed'
+        )
+
+    return string

@@ -1,8 +1,13 @@
+"""This module contains the format of the data to be returned
+in the API response."""
+
 from flask import request
 from flask_restful import fields
 
 
 class PaginationUrl(fields.Raw):
+    """Pagination URL format."""
+
     def format(self, value):
         if value is None:
             return None
@@ -11,6 +16,8 @@ class PaginationUrl(fields.Raw):
 
 
 class Status(fields.Raw):
+    """Quote status field."""
+
     def format(self, value):
         return value.name
 

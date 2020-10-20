@@ -1,11 +1,19 @@
+"""This module contains registers the URL for the API."""
+
 from flask import Blueprint
 from flask_restful import Api
 
 bp = Blueprint('api', __name__)
 api = Api()
 
+# pylint: disable=too-many-locals
+
 
 def init_app(app):
+    """Register this extension with the Flask app."""
+
+    # pylint: disable=import-outside-toplevel
+
     from flask_cors import CORS
     from flask_jwt_extended import JWTManager
 

@@ -1,3 +1,5 @@
+"""This module contains the likes API."""
+
 from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,
@@ -15,10 +17,14 @@ from .utils import get_quote_or_404
 
 
 class Likes(Resource):
+    """Resource for likes."""
 
+    @classmethod
     @marshal_with(quotes_fields)
     @jwt_required
-    def get(self):
+    def get(cls):
+        """Returns the liked quotes of the current user."""
+
         parser = reqparse.RequestParser()
         parser.add_argument('page', type=int, location='args')
         parser.add_argument('per_page', type=int, location='args')
@@ -29,9 +35,12 @@ class Likes(Resource):
         current_user = get_jwt_identity()
         return db_client.get_user_liked_quotes(page, per_page, current_user['id'])
 
+    @classmethod
     @marshal_with(quote_fields)
     @jwt_required
-    def post(self):
+    def post(cls):
+        """Creates a like for the current user."""
+
         parser = reqparse.RequestParser()
         parser.add_argument('id', type=int, required=True)
         args = parser.parse_args()
@@ -52,10 +61,14 @@ class Likes(Resource):
 
 
 class Like(Resource):
+    """Resource for like."""
 
+    @classmethod
     @marshal_with(quote_fields)
     @jwt_required
-    def delete(self, quote_id):
+    def delete(cls, quote_id):
+        """Deletes a like from the current user."""
+
         current_user = get_jwt_identity()
         quote = get_quote_or_404(quote_id, current_user['id'])
 

@@ -1,4 +1,5 @@
-# pylint: disable=broad-except
+"""This module contains authorization API."""
+
 from firebase_admin import auth
 from firebase_admin.auth import (
     InvalidIdTokenError,
@@ -32,18 +33,20 @@ from .fields import user_fields
 
 
 class Token(Resource):
+    """Resource for getting access and refresh tokens."""
 
-    def __init__(self):
-        self.parser = reqparse.RequestParser()
-        self.parser.add_argument('token', type=str, required=True)
+    @classmethod
+    def post(cls):
+        """Sets tokens in cookies."""
 
-    def post(self):
-        args = self.parser.parse_args()
+        parser = reqparse.RequestParser()
+        parser.add_argument('token', type=str, required=True)
+        args = parser.parse_args()
 
         try:
             firebase_user = auth.verify_id_token(args['token'])
-        except (ValueError, InvalidIdTokenError, ExpiredIdTokenError, RevokedIdTokenError) as e:
-            abort(401, message=str(e))
+        except (ValueError, InvalidIdTokenError, ExpiredIdTokenError, RevokedIdTokenError) as error:
+            abort(401, message=str(error))
 
         user = db_client.get_user(firebase_user_id=firebase_user['user_id'])
         if not user:
@@ -70,9 +73,13 @@ class Token(Resource):
 
 
 class TokenRefresh(Resource):
+    """Resource for refreshing access token."""
 
+    @classmethod
     @jwt_refresh_token_required
-    def post(self):
+    def post(cls):
+        """Sets a refreshed token in cookies."""
+
         identity = get_jwt_identity()
         access_token = create_access_token(identity)
 
@@ -82,9 +89,13 @@ class TokenRefresh(Resource):
 
 
 class TokenRevoke(Resource):
+    """Resource for unsetting tokens."""
 
+    @classmethod
     @jwt_required
-    def post(self):
+    def post(cls):
+        """Removes token in cookies."""
+
         response = jsonify({})
         unset_jwt_cookies(response)
         return make_response(response, 204)

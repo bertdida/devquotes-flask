@@ -1,3 +1,5 @@
+"""This module contains the application models."""
+
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy, BaseQuery
 
@@ -15,6 +17,8 @@ migrate = Migrate(compare_type=True)
 
 
 def init_app(app):
+    """Register this extension with the Flask app."""
+
     app.app_context().push()
 
     db.init_app(app)
