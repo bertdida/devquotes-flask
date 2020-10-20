@@ -4,6 +4,8 @@ on:
   repository_dispatch:
     types: master_deploy
   push:
+    branches:
+      - master
   pull_request:
     branches:
       - master
