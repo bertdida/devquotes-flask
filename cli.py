@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 
 from sqlalchemy.exc import DataError, IntegrityError
 
@@ -21,14 +22,11 @@ def register(app):
             print('Atleast one admin user should exists in database to continue seeding.')
             return
 
-        seeder_path = './seeder'
-        json_files = [
-            filename for filename in os.listdir(seeder_path)
-            if filename.endswith('.json')
-        ]
+        json_path = './seeder'
+        json_files = get_filenames(json_path)
 
         for json_file in json_files:
-            with open(f'{seeder_path}/{json_file}') as in_file:
+            with open(f'{json_path}/{json_file}') as in_file:
                 json_data = json.load(in_file)
                 data = json_data['data']
                 model_name = json_data['model']
@@ -38,6 +36,31 @@ def register(app):
 
                 elif model_name == 'Quote':
                     _seed_quote(data)
+
+
+def get_filenames(path):
+    """Returns the JSON filenames on the given `path`sorted
+    by name naturally."""
+
+    filenames = [
+        filename for filename in os.listdir(path)
+        if filename.endswith('.json')
+    ]
+
+    return natsort(filenames)
+
+
+def natsort(seq, natsort_re=re.compile(r'([0-9]+)')):
+    """Sorts an iterable naturally."""
+
+    def convert(text):
+        return [
+            int(text) if text.isdigit() else text.lower()
+            for text in re.split(natsort_re, text)
+        ]
+
+    seq.sort(key=convert)
+    return seq
 
 
 def _seed_quote_status(data):
