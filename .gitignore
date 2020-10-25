@@ -1,10 +1,8 @@
 .vscode/
+__pycache__/
+/ssl
 .env
-*.sqlite
 firebase.json
 quotes.json
-__pycache__/
 !tests/**/quotes.json
-act/
 TODO
-/ssl
