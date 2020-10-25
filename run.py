@@ -1,11 +1,8 @@
 """Runs the application."""
 
-import json
 import os
 
-import click
-from sqlalchemy.exc import DataError, IntegrityError
-
+import cli
 from devquotes import create_app
 from devquotes.models import db
 from devquotes.models.like import Like
@@ -14,6 +11,7 @@ from devquotes.models.quote_status import QuoteStatus
 from devquotes.models.user import User
 
 app = create_app(config_class=os.environ['CONFIG_CLASS'])
+cli.register(app)
 
 
 @app.shell_context_processor
@@ -35,27 +33,6 @@ def create_database_tables():
 
     db.configure_mappers()
     db.create_all()
-
-
-@app.cli.command()
-@click.option('--filename', required=True, type=click.File('rb'), help='The JSON file to parse.')
-def seed(filename):
-    """Populates quote table in database.
-
-    Args:
-        filename (string): The JSON file's name.
-    """
-
-    try:
-        quotes = json.load(filename)
-    except json.decoder.JSONDecodeError as error:
-        raise click.BadParameter(error)
-
-    for data in quotes:
-        try:
-            Quote.create(**data)
-        except (DataError, IntegrityError):
-            pass
 
 
 def main():

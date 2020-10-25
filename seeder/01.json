@@ -1,0 +1,17 @@
+{
+  "model": "QuoteStatus",
+  "data": [
+    {
+      "name": "published",
+      "display_name": "Published"
+    },
+    {
+      "name": "pending_review",
+      "display_name": "Pending Review"
+    },
+    {
+      "name": "spam",
+      "display_name": "Spam"
+    }
+  ]
+}

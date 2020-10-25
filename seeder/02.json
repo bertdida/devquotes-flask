@@ -1,0 +1,505 @@
+{
+  "model": "Quote",
+  "data": [
+    {
+      "author": "Paul Krugman",
+      "quotation": "Simple doesn't mean stupid. Thinking that it does, does.",
+      "source": "https://twitter.com/CodeWisdom/status/1111689570641498114"
+    },
+    {
+      "author": "Uncle Bob Martin",
+      "quotation": "A consistent lexicon is a great boon to the programmers who must use your code.",
+      "source": "https://twitter.com/CodeWisdom/status/847494399491579904"
+    },
+    {
+      "author": "Grace Hopper",
+      "quotation": "If it's a good idea, go ahead and do it. It is much easier to apologize than it is to get permission.",
+      "source": "https://twitter.com/CodeWisdom/status/1094968551100870657"
+    },
+    {
+      "author": "Brian Kernighan",
+      "quotation": "An effective way to test code is to exercise it at its natural boundaries.",
+      "source": "https://twitter.com/CodeWisdom/status/832675737551384576"
+    },
+    {
+      "author": "C.A.R. Hoare",
+      "quotation": "The most important property of a program is whether it accomplishes the intention of its user.",
+      "source": "https://twitter.com/CodeWisdom/status/1113782519336439808"
+    },
+    {
+      "author": "Peter Landin",
+      "quotation": "Most papers in computer science describe how their author learned what someone else already knew.",
+      "source": "https://twitter.com/CodeWisdom/status/1050002259407441920"
+    },
+    {
+      "author": "Joyce Wheeler",
+      "quotation": "Sometimes it's better to leave something alone, to pause, and that's very true of programming.",
+      "source": "https://twitter.com/CodeWisdom/status/1087409675543502848"
+    },
+    {
+      "author": "Jason Gorman",
+      "quotation": "Refuctoring - the process of taking a well-designed piece of code and, through a series of small, reversible changes, making it completely unmaintainable by anyone except yourself.",
+      "source": "https://twitter.com/CodeWisdom/status/946483866277163008"
+    },
+    {
+      "author": "Christopher Thompson",
+      "quotation": "Sometimes it pays to stay in bed on Monday, rather than spending the rest of the week debugging Monday's code.",
+      "source": "https://twitter.com/CodeWisdom/status/1120305503932907520"
+    },
+    {
+      "author": "Ellen Ullman",
+      "quotation": "Software engineering is not about right and wrong but only better and worse.",
+      "source": "https://twitter.com/CodeWisdom/status/834125287151501312"
+    },
+    {
+      "author": "Alan Perlis",
+      "quotation": "If you have a procedure with ten parameters, you probably missed some.",
+      "source": "https://twitter.com/CodeWisdom/status/879801270629957632"
+    },
+    {
+      "author": "John Backus",
+      "quotation": "You need the willingness to fail all the time.",
+      "source": "https://twitter.com/CodeWisdom/status/829722275532402688"
+    },
+    {
+      "author": "Tim Kadlec",
+      "quotation": "Blame the implementation, not the technique.",
+      "source": "https://twitter.com/CodeWisdom/status/1125741319484248065"
+    },
+    {
+      "author": "Miguel de Icaza",
+      "quotation": "Every piece of software written today is likely going to infringe on someone else's patent.",
+      "source": "https://twitter.com/CodeWisdom/status/1005132383014805504"
+    },
+    {
+      "author": "Bram Cohen",
+      "quotation": "The mark of a mature programmer is willingness to throw out code you spent time on when you realize it's pointless.",
+      "source": "https://twitter.com/CodeWisdom/status/848959039178506240"
+    },
+    {
+      "author": "David Parnas",
+      "quotation": "Complexity is not a goal. I don't want to be remembered as an engineer of complex systems.",
+      "source": "https://twitter.com/CodeWisdom/status/1046378379367387137"
+    },
+    {
+      "author": "Tom Gilb",
+      "quotation": "If you don't actively attack the risks, the risks will actively attack you.",
+      "source": "https://twitter.com/CodeWisdom/status/1126532341780897793"
+    },
+    {
+      "author": "Paul Graham",
+      "quotation": "The object-oriented model makes it easy to build up programs by accretion. What this often means, in practice, is that it provides a structured way to write spaghetti code.",
+      "source": "https://twitter.com/CodeWisdom/status/933705194852012032"
+    },
+    {
+      "author": "Stephen Johnson",
+      "quotation": "A successful software tool is one that was used to do something undreamed of by its author.",
+      "source": "https://twitter.com/CodeWisdom/status/980061399320842240"
+    },
+    {
+      "author": "Jim Highsmith",
+      "quotation": "Process is not a substitute for skill.",
+      "source": "https://twitter.com/CodeWisdom/status/753634452438409216"
+    },
+    {
+      "author": "Dan Kaminsky",
+      "quotation": "Debugging is anticipated with distaste, performed with reluctance, and bragged about forever.",
+      "source": "https://twitter.com/CodeWisdom/status/822112140131713024"
+    },
+    {
+      "author": "Donald Knuth",
+      "quotation": "Computers are good at following instructions, but not at reading your mind.",
+      "source": "https://twitter.com/CodeWisdom/status/1055866677420802049"
+    },
+    {
+      "author": "Dan Bricklin",
+      "quotation": "Sometimes the idea behind a program is one small creative effort. Just like in a short story, one little twist in the plot is the whole idea behind it.",
+      "source": "https://twitter.com/CodeWisdom/status/1140599221441224705"
+    },
+    {
+      "author": "Jeff Patton.",
+      "quotation": "We don't need an accurate document, we need a shared understanding.",
+      "source": "https://twitter.com/CodeWisdom/status/797107369985658880"
+    },
+    {
+      "author": "@gunnnpowder",
+      "quotation": "Programming is another way to teach the world that the smallest, tiniest things also matter just as much. Just like when a code won't run without a semi colon.",
+      "source": "https://twitter.com/CodeWisdom/status/1051089418604433409"
+    },
+    {
+      "author": "Robert C. Martin",
+      "quotation": "Leave the campground cleaner than the way you found it.",
+      "source": "https://twitter.com/CodeWisdom/status/1112044065699385344"
+    },
+    {
+      "author": "Michael Feathers",
+      "quotation": "OO makes code understandable by encapsulating moving parts. FP makes code understandable by minimizing moving parts.",
+      "source": "https://twitter.com/CodeWisdom/status/714176933668462592"
+    },
+    {
+      "author": "Jonathan Sachs",
+      "quotation": "You can interact with a computer. And if you do it just right, you can make wonderful things happen.",
+      "source": "https://twitter.com/CodeWisdom/status/1017387349918015488"
+    },
+    {
+      "author": "Alan Perlis",
+      "quotation": "In programming, as in everything else, to be in error is to be reborn.",
+      "source": "https://twitter.com/CodeWisdom/status/931671044628402176"
+    },
+    {
+      "author": "Jamie Zawinski",
+      "quotation": "To a database person, every nail looks like a thumb. Or something like that.",
+      "source": "https://twitter.com/CodeWisdom/status/753968649350897666"
+    },
+    {
+      "author": "Gary Kildall",
+      "quotation": "A flexible program demonstrates the difference between a good designer and someone who is just getting a piece of code out.",
+      "source": "https://twitter.com/CodeWisdom/status/735920232376733696"
+    },
+    {
+      "author": "Niklaus Wirth",
+      "quotation": "Reliable and transparent programs are usually not in the interest of the designer.",
+      "source": "https://twitter.com/CodeWisdom/status/142244076455084033"
+    },
+    {
+      "author": "Bill Gates",
+      "quotation": "If a kid is addicted to a computer, I think that's far better than watching TV, because at least his mind is making choices.",
+      "source": "https://twitter.com/CodeWisdom/status/738659742709649408"
+    },
+    {
+      "author": "@yonatanm",
+      "quotation": "Software craftsmanship is not about writing the perfect  piece of code. It is about continuously improving your skills, so your future code will be better.",
+      "source": "https://twitter.com/CodeWisdom/status/977887072580186112"
+    },
+    {
+      "author": "David Leinweber",
+      "quotation": "If you give someone a program, you will frustrate them for a day; if you teach them how to program, you will frustrate them for a lifetime.",
+      "source": "https://twitter.com/CodeWisdom/status/949791945735507977"
+    },
+    {
+      "author": "Ken Thompson",
+      "quotation": "No amount of source-level verification or scrutiny will protect you from using untrusted code.",
+      "source": "https://twitter.com/CodeWisdom/status/834850062266167296"
+    },
+    {
+      "author": "Alan Turing",
+      "quotation": "We can only see a short distance ahead, but we can see plenty there that needs to be done.",
+      "source": "https://twitter.com/CodeWisdom/status/896134884690804736"
+    },
+    {
+      "author": "James O. Coplien",
+      "quotation": "Objects are abstractions of processing. Threads are abstractions of schedule.",
+      "source": "https://twitter.com/CodeWisdom/status/1049639867653734402"
+    },
+    {
+      "author": "Donald Knuth",
+      "quotation": "Premature optimisation is the root of all evil in programming.",
+      "source": "https://twitter.com/CodeWisdom/status/1000413501628837890"
+    },
+    {
+      "author": "Robert C. Martin",
+      "quotation": "Whether you are designing systems or individual modules, never forget to use the simplest thing that can possibly work.",
+      "source": "https://twitter.com/CodeWisdom/status/721410637587460096"
+    },
+    {
+      "author": "Fred Brooks",
+      "quotation": "Plan to throw one away. You will, anyway.",
+      "source": "https://twitter.com/CodeWisdom/status/1021387959268970498"
+    },
+    {
+      "author": "Rich Hickey",
+      "quotation": "What matters for simplicity is that there's not interleaving.",
+      "source": "https://twitter.com/CodeWisdom/status/993165747219288064"
+    },
+    {
+      "author": "Damian Conway",
+      "quotation": "Documentation is a love letter that you write to your future self.",
+      "source": "https://twitter.com/CodeWisdom/status/1133713854142267393"
+    },
+    {
+      "author": "Peter Weinberger",
+      "quotation": "We sort of understood abstractly the idea that there are only two kinds of software projects: failures and future legacy horrors.",
+      "source": "https://twitter.com/CodeWisdom/status/954361307242860544"
+    },
+    {
+      "author": "Ted Nelson",
+      "quotation": "A user interface should be so simple that a beginner in an emergency can understand it within ten seconds.",
+      "source": "https://twitter.com/CodeWisdom/status/1102925985303986176"
+    },
+    {
+      "author": "@victorrentea",
+      "quotation": "The second time you postpone refactoring a piece of code, it has become Legacy. Stand up for your Craft!",
+      "source": "https://twitter.com/CodeWisdom/status/1042044066807115777"
+    },
+    {
+      "author": "Susan Gerhart",
+      "quotation": "One person's constant is another person's variable.",
+      "source": "https://twitter.com/CodeWisdom/status/1005080515693686786"
+    },
+    {
+      "author": "Uncle Bob",
+      "quotation": "Produce no document unless its need is immediate and significant.",
+      "source": "https://twitter.com/CodeWisdom/status/716319030689284096"
+    },
+    {
+      "author": "Bram Cohen",
+      "quotation": "A good way to have good ideas is by being unoriginal.",
+      "source": "https://twitter.com/CodeWisdom/status/851465296636506112"
+    },
+    {
+      "author": "Robert Martin",
+      "quotation": "Would you rather Test-First or Debug-Later?",
+      "source": "https://twitter.com/CodeWisdom/status/716620029148721154"
+    },
+    {
+      "author": "Bjarne Stroustrup",
+      "quotation": "If someone claims to have the perfect programming language, he is either a fool or a salesman or both.",
+      "source": "https://twitter.com/CodeWisdom/status/888532544169402369"
+    },
+    {
+      "author": "Ellen Ullman",
+      "quotation": "The messiness cannot go into the program; it piles up around the programmer.",
+      "source": "https://twitter.com/CodeWisdom/status/984786787578122240"
+    },
+    {
+      "author": "@ShaneCarrollMay",
+      "quotation": "There is much more to programming than whether or not the code runs.",
+      "source": "https://twitter.com/CodeWisdom/status/867117697431195649"
+    },
+    {
+      "author": "Gerald Weinberg",
+      "quotation": "If builders built buildings the way programmers wrote programs, then the first woodpecker that came along wound destroy civilization.",
+      "source": "https://twitter.com/CodeWisdom/status/968494431908388864"
+    },
+    {
+      "author": "Tim Berners-Lee",
+      "quotation": "The Web as I envisaged it, we have not seen it yet. The future is still so much bigger than the past.",
+      "source": "https://twitter.com/CodeWisdom/status/900055371280261120"
+    },
+    {
+      "author": "Douglas Crockford",
+      "quotation": "It turns out that style matters in programming for the same reason that it matters in writing. It makes for better reading.",
+      "source": "https://twitter.com/CodeWisdom/status/1063491942229651456"
+    },
+    {
+      "author": "Ray Ozzie",
+      "quotation": "I think fewer people should be shooting for the moon, and more people should be finding a niche.",
+      "source": "https://twitter.com/CodeWisdom/status/770275691220856836"
+    },
+    {
+      "author": "Tony \"Quicksort\" Hoare",
+      "quotation": "I regard it as the highest goal of programming language design to enable good ideas to be elegantly expressed.",
+      "source": "https://twitter.com/CodeWisdom/status/716681441229336576"
+    },
+    {
+      "author": "P. J. Plauger",
+      "quotation": "Don't stop with your first draft.",
+      "source": "https://twitter.com/CodeWisdom/status/836261171435012098"
+    },
+    {
+      "author": "Jeff Atwood",
+      "quotation": "Obviously we want to succeed. But on some level, success is irrelevant, because the process is inherently satisfying.",
+      "source": "https://twitter.com/CodeWisdom/status/817077957739106305"
+    },
+    {
+      "author": "Seymour Cray",
+      "quotation": "The trouble with programmers is that you can never tell what a programmer is doing until it's too late.",
+      "source": "https://twitter.com/CodeWisdom/status/1123995746884308994"
+    },
+    {
+      "author": "C.A.R Hoare",
+      "quotation": "Inside every well-written large program is a well-written small program.",
+      "source": "https://twitter.com/CodeWisdom/status/964145774815825920"
+    },
+    {
+      "author": "Edsger Dijkstra",
+      "quotation": "If debugging is the process of removing bugs, then programming must be the process of putting them in.",
+      "source": "https://twitter.com/CodeWisdom/status/852582911429812224"
+    },
+    {
+      "author": "Jessica Joy Kerr",
+      "quotation": "In programming, it's dangerous to work near your working memory threshold. You get more mistakes and more complicated code.",
+      "source": "https://twitter.com/CodeWisdom/status/1229036964478881792"
+    },
+    {
+      "author": "Roedy Green",
+      "quotation": "The longer it takes for a bug to surface, the harder it is to find.",
+      "source": "https://twitter.com/CodeWisdom/status/1117044012408614914"
+    },
+    {
+      "author": "Rick Waldron",
+      "quotation": "All code in any code-base should look like a single person typed it, no matter how many people contributed.",
+      "source": "https://twitter.com/CodeWisdom/status/705393329442267136"
+    },
+    {
+      "author": "Uncle Bob",
+      "quotation": "It is not the language that makes programs appear simple. It is the programmer that make the language appear simple!",
+      "source": "https://twitter.com/CodeWisdom/status/1127982038236258307"
+    },
+    {
+      "author": "Alan Kay",
+      "quotation": "Simple things should be simple and complex things should be possible.",
+      "source": "https://twitter.com/CodeWisdom/status/863131417013866496"
+    },
+    {
+      "author": "Michael A. Jackson",
+      "quotation": "Software is only one interpretation of the reality of the problem it is solving.",
+      "source": "https://twitter.com/CodeWisdom/status/841696211107250176"
+    },
+    {
+      "author": "David Wheeler",
+      "quotation": "There is no problem in computer science that can't be solved using another level of indirection. But that usually will create another problem.",
+      "source": "https://twitter.com/CodeWisdom/status/1042096200059703296"
+    },
+    {
+      "author": "C.A.R. (Tony) Hoare",
+      "quotation": "The unavoidable price of reliability is simplicity.",
+      "source": "https://twitter.com/CodeWisdom/status/864226685096529920"
+    },
+    {
+      "author": "Meir Lehman",
+      "quotation": "An evolving system increases its complexity unless work is done to reduce it.",
+      "source": "https://twitter.com/CodeWisdom/status/1090967187093884929"
+    },
+    {
+      "author": "Linus Torvalds",
+      "quotation": "Any program is only as good as it is useful.",
+      "source": "https://twitter.com/CodeWisdom/status/1002529446920904709"
+    },
+    {
+      "author": "@TupleScript",
+      "quotation": "There's nothing wrong with using others code. The essence of object-oriented programming is reusability.",
+      "source": "https://twitter.com/CodeWisdom/status/918537100554891267"
+    },
+    {
+      "author": "Linus Torvalds",
+      "quotation": "Bad programmers worry about the code. Good programmers worry about data structures and their relationships.",
+      "source": "https://twitter.com/CodeWisdom/status/142709372559163393"
+    },
+    {
+      "author": "Aaron Swartz",
+      "quotation": "Be curious. Read widely. Try new things. I think a lot of what people call intelligence boils down to curiosity.",
+      "source": "https://twitter.com/CodeWisdom/status/1122842217159241729"
+    },
+    {
+      "author": "Adam Osborne",
+      "quotation": "The most valuable thing you can make is a mistake - you can't learn anything from being perfect.",
+      "source": "https://twitter.com/CodeWisdom/status/1108790528865435648"
+    },
+    {
+      "author": "Tom Lehrer",
+      "quotation": "Base eight is just like base ten really, if you're missing two fingers.",
+      "source": "https://twitter.com/CodeWisdom/status/725048566209740801"
+    },
+    {
+      "author": "Edsger Dijkstra",
+      "quotation": "The computing scientist's main challenge is not to get confused by the complexities of his own making.",
+      "source": "https://twitter.com/CodeWisdom/status/970720603903754242"
+    },
+    {
+      "author": "Leslie Lamport",
+      "quotation": "Thinking doesn't guarantee that we won't make mistakes. But not thinking guarantees that we will.",
+      "source": "https://twitter.com/CodeWisdom/status/898605778763825154"
+    },
+    {
+      "author": "Robert C. Martin",
+      "quotation": "Abstraction is the elimination of the irrelevant and the amplification of the essential.",
+      "source": "https://twitter.com/CodeWisdom/status/927662635121864705"
+    },
+    {
+      "author": "Steve McConnell",
+      "quotation": "It's OK to figure out murder mysteries, but you shouldn't need to figure out code. You should be able to read it.",
+      "source": "https://twitter.com/CodeWisdom/status/1044566439695458304"
+    },
+    {
+      "author": "Donald Knuth",
+      "quotation": "An algorithm must be seen to be believed.",
+      "source": "https://twitter.com/CodeWisdom/status/845320053365129217"
+    },
+    {
+      "author": "Alan Turing",
+      "quotation": "Sometimes it is the people no one can imagine anything of who do the things no one can imagine.",
+      "source": "https://twitter.com/CodeWisdom/status/999992731559776258"
+    },
+    {
+      "author": "Robert C. Martin",
+      "quotation": "So if you want to go fast, if you want to get done quickly, if you want your code to be easy to write, make it easy to read.",
+      "source": "https://twitter.com/CodeWisdom/status/1093866289465044993"
+    },
+    {
+      "author": "Andy Hertzfeld",
+      "quotation": "More than anything else, what motivates me is that I want as many people as possible to use my programs.",
+      "source": "https://twitter.com/CodeWisdom/status/772851543691452416"
+    },
+    {
+      "author": "Mike Johnson",
+      "quotation": "Pasting code from the Internet into production code is like chewing gum found in the street.",
+      "source": "https://twitter.com/CodeWisdom/status/705001907430027264"
+    },
+    {
+      "author": "Robert C. Martin",
+      "quotation": "Say what you mean. Mean what you say.",
+      "source": "https://twitter.com/CodeWisdom/status/920742036227190785"
+    },
+    {
+      "author": "Benjamin Franklin",
+      "quotation": "If you fail to plan, you are planning to fail!",
+      "source": "https://twitter.com/CodeWisdom/status/765202134279266305"
+    },
+    {
+      "author": "Alan Kay",
+      "quotation": "The best way to predict the future iѕ to invent it.",
+      "source": "https://twitter.com/CodeWisdom/status/831893954085912581"
+    },
+    {
+      "author": "Robert C. Martin",
+      "quotation": "Code formatting is about communication, and communication is the professional developer's first order of business.",
+      "source": "https://twitter.com/CodeWisdom/status/806167098712059905"
+    },
+    {
+      "author": "Jeremy Keith",
+      "quotation": "Java is to JavaScript as ham is to hamster.",
+      "source": "https://twitter.com/CodeWisdom/status/1076175606746882050"
+    },
+    {
+      "author": "Donald Knuth",
+      "quotation": "A programmer is ideally an essayist who works with traditional aesthetic & literary forms as well as mathematical concepts.",
+      "source": "https://twitter.com/CodeWisdom/status/764114988441165824"
+    },
+    {
+      "author": "Bob Frankston",
+      "quotation": "Reusing pieces of code is liked picking off sentences from other people's stories and trying to make a magazine article.",
+      "source": "https://twitter.com/CodeWisdom/status/809467904953634816"
+    },
+    {
+      "author": "The Pragmatic Programmer",
+      "quotation": "Gain familiarity with the shell, and you'll find your productivity soaring.",
+      "source": "https://twitter.com/CodeWisdom/status/798958586693124097"
+    },
+    {
+      "author": "Ted Dziuba",
+      "quotation": "Software development processes exist to manage the bell curve of ability in developers.",
+      "source": "https://twitter.com/CodeWisdom/status/728262733565702148"
+    },
+    {
+      "author": "Neil McAllister",
+      "quotation": "Programming languages move slowly, and the more popular a language is, the slower it moves.",
+      "source": "https://twitter.com/CodeWisdom/status/147799674600964097"
+    },
+    {
+      "author": "Kyle Woodbury",
+      "quotation": "Programming is like kicking yourself in the face, sooner or later your nose will bleed.",
+      "source": "https://twitter.com/CodeWisdom/status/930583880557629440"
+    },
+    {
+      "author": "Jeff Atwood",
+      "quotation": "If you don't have people that care about usability on your project, your project is doomed.",
+      "source": "https://twitter.com/CodeWisdom/status/821024990069932032"
+    },
+    {
+      "author": "Rich Hickey",
+      "quotation": "Most of the biggest problems in software are problems of misconception.",
+      "source": "https://twitter.com/CodeWisdom/status/913101413760282624"
+    }
+  ]
+}
