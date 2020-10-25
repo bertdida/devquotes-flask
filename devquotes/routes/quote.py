@@ -32,8 +32,16 @@ class Quotes(Resource):
     def get(cls):
         """Returns quotes with regards to the given query parameters."""
 
-        statuses = db_client.get_quote_statuses()
-        status_choices = [status.name for status in statuses]
+        # pylint: disable=too-many-locals
+
+        current_user = get_jwt_identity()
+        user_id = current_user['id'] if current_user else None
+        is_not_admin = not current_user['is_admin']
+
+        status_choices = []
+        if not is_not_admin:
+            statuses = db_client.get_quote_statuses()
+            status_choices = [status.name for status in statuses]
 
         parser = reqparse.RequestParser()
         parser.add_argument('query', location='args')
@@ -50,11 +58,14 @@ class Quotes(Resource):
         page = args['page']
         per_page = args['per_page']
         status = args['status']
-        submitted_by = args['submitted_by']
         likes = args['likes']
+        submitted_by = args['submitted_by']
 
-        current_user = get_jwt_identity()
-        user_id = current_user['id'] if current_user else None
+        restricted_args = ['status', 'likes', 'submitted_by']
+        if is_not_admin and any(args[a] for a in restricted_args):
+            # non-admin users are not allowed to set value on any of the
+            # restricted arguments
+            abort(403)
 
         if search_query:
             return db_client.search_quotes(search_query, page, per_page, user_id)
