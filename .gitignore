@@ -3,6 +3,4 @@ __pycache__/
 /ssl
 .env
 firebase.json
-quotes.json
-!tests/**/quotes.json
 TODO
