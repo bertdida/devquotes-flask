@@ -111,6 +111,17 @@ class TestViewer:
     def test_filter_quotes(self):
         """Tests unauthenticated user filtering quotes."""
 
+        filters = {
+            'likes': 'et1',
+            'submitted_by': 'John Doe',
+            'status': 'pending_review',
+        }
+
+        # non-admin users are not allowed to set `likes`, `submitted_by`
+        # and `status` query params
+        resp = self.actions.filter_quotes(**filters)
+        assert_valid_status_code(resp, 403)
+
     def test_get_quote(self, quote):
         """Tests unauthenticated user getting a quote."""
 
@@ -206,6 +217,17 @@ class TestContributor:
     def test_filter_quotes(self):
         """Tests authenticated user filtering quotes."""
 
+        filters = {
+            'likes': 'et1',
+            'submitted_by': 'John Doe',
+            'status': 'pending_review',
+        }
+
+        # non-admin users are not allowed to set `likes`, `submitted_by`
+        # and `status` query params
+        resp = self.actions.filter_quotes(**filters)
+        assert_valid_status_code(resp, 403)
+
     def test_get_quote(self, quote):
         """Tests authenticated user getting a quote."""
 
@@ -300,6 +322,16 @@ class TestAdmin:
 
     def test_filter_quotes(self):
         """Tests admin user filtering quotes."""
+
+        filters = {
+            'likes': 'et1',
+            'submitted_by': 'John Doe',
+            'status': 'pending_review',
+        }
+
+        resp = self.actions.filter_quotes(**filters)
+        assert_valid_status_code(resp, 200)
+        assert_valid_schema(resp, 'quotes.json')
 
     def test_get_quote(self, quote):
         """Tests admin user getting a quote."""
