@@ -25,7 +25,7 @@ seed_configs = [
     },
     {
         'model': QuoteStatus,
-        'filename': 'status.json',
+        'filename': 'quote-statuses.json',
     },
     {
         'model': Quote,
