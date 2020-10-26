@@ -6,6 +6,7 @@ import re
 
 from sqlalchemy.exc import DataError, IntegrityError
 
+from devquotes.models import db
 from devquotes.models.user import User
 from devquotes.models.quote import Quote
 from devquotes.models.quote_status import QuoteStatus
@@ -14,8 +15,10 @@ from devquotes.models.quote_status import QuoteStatus
 def register(app):
     """Call this function passing the Flask app."""
 
+    # pylint: disable=unused-variable
+
     @app.cli.command()
-    def seed():  # pylint: disable=unused-variable
+    def seed():
         """Seeds the database."""
 
         if not User.get_by(first=True, is_admin=True):
@@ -36,6 +39,14 @@ def register(app):
 
                 elif model_name == 'Quote':
                     _seed_quote(data)
+
+    @app.cli.command()
+    def deletespams():
+        spam_status = QuoteStatus.get_by(first=True, name='spam')
+        row_count = Quote.query.filter_by(status_id=spam_status.id).delete()
+        db.session.commit()
+
+        print(f'Deleted {row_count} spam quote/s.')
 
 
 def get_filenames(path):
