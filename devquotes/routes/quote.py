@@ -36,7 +36,7 @@ class Quotes(Resource):
 
         current_user = get_jwt_identity()
         user_id = current_user['id'] if current_user else None
-        is_not_admin = not current_user['is_admin']
+        is_not_admin = not user_id or not current_user['is_admin']
 
         status_choices = []
         if not is_not_admin:
