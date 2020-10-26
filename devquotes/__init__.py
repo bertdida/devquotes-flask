@@ -11,7 +11,7 @@ def create_app(config_class):
         config_class (string): The name of the configuration class.
 
     Returns:
-        Flask: The Flask app instance.
+        object: The Flask app instance.
     """
 
     app = Flask(__name__)
