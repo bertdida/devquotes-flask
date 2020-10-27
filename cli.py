@@ -50,7 +50,7 @@ def register(app):
 
 
 def get_filenames(path):
-    """Returns the JSON filenames on the given `path`sorted
+    """Returns the JSON filenames on the given `path` sorted
     by name naturally."""
 
     filenames = [
