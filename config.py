@@ -25,6 +25,9 @@ class Config:
 
     ALLOWED_ORIGINS = os.environ['ALLOWED_ORIGINS'].split(',')
 
+    # this value should match the name on `quote_status` seeder
+    PUBLISHED_STATUS_NAME = 'published'
+
 
 class Development(Config):
     """Development configurations."""
