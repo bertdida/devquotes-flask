@@ -11,7 +11,7 @@ from devquotes.models.user import User
 from devquotes.models.quote import Quote
 from devquotes.models.quote_status import QuoteStatus
 
-PUBLISHED_STATUS_NAME = 'published'
+PUBLISHED_STATUS_NAME = current_app.config['PUBLISHED_STATUS_NAME']
 
 
 def get_quotes(page, per_page, user_id=None, **filters):
@@ -135,7 +135,7 @@ def get_random_quote(user_id=None):
     result = (
         Quote.query
         .join(QuoteStatus)
-        .filter(QuoteStatus.name == 'published')
+        .filter(QuoteStatus.name == PUBLISHED_STATUS_NAME)
         .add_columns(case([(Like.quote_id.isnot(None), True)], else_=False).label('is_liked'))
         .outerjoin(Like, (Like.quote_id == Quote.id) & (Like.user_id == user_id))
         .order_by(func.random())
