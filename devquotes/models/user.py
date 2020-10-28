@@ -1,5 +1,6 @@
 """This module defines the structure of user table."""
 
+from flask import current_app
 from sqlalchemy.sql.expression import func
 
 from . import db
@@ -37,11 +38,12 @@ class User(BaseMixin, db.Model):
     def total_submitted(self):
         """Returns the total published quotes submitted by the user."""
 
+        status_name = current_app.config['PUBLISHED_STATUS_NAME']
         return (
             db.session
             .query(func.count(Quote.id))
             .join(QuoteStatus)
-            .filter(QuoteStatus.name == 'published')
+            .filter(QuoteStatus.name == status_name)
             .filter(Quote.contributor_id == self.id)
             .scalar()
         )
