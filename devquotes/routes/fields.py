@@ -28,8 +28,10 @@ user_fields = {
         'name': fields.String,
         'picture_url': fields.String,
         'is_admin': fields.Boolean,
-        'total_likes': fields.Integer,
-        'total_submitted': fields.Integer,
+        'stats': {
+            'total_likes': fields.Integer,
+            'total_submitted': fields.Integer,
+        }
     }
 }
 
