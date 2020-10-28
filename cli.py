@@ -38,7 +38,15 @@ def register(app):
                     _seed_quote_status(data)
 
                 elif model_name == 'Quote':
-                    _seed_quote(data)
+                    admin = User.get_by(first=True, is_admin=True)
+                    status = QuoteStatus\
+                        .get_by(first=True, name=app.config['PUBLISHED_STATUS_NAME'])
+
+                    _seed_quote(
+                        data,
+                        status_id=status.id,
+                        contributor_id=admin.id,
+                    )
 
     @app.cli.command()
     def deletespams():
@@ -84,14 +92,8 @@ def _seed_quote_status(data):
             print(error)
 
 
-def _seed_quote(data):
+def _seed_quote(data, status_id, contributor_id):
     """Seeds quotes."""
-
-    admin = User.get_by(first=True, is_admin=True)
-    published_status = QuoteStatus.get_by(first=True, name='published')
-
-    status_id = published_status.id
-    contributor_id = admin.id
 
     for curr_data in data:
         curr_data['status_id'] = status_id
