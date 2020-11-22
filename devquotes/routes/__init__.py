@@ -27,10 +27,14 @@ def init_app(app):
     import firebase_admin
 
     creds = app.config['FIREBASE_CREDENTIAL']
-    creds_escaped = creds.encode().decode('unicode_escape')
-    creds_dict = json.loads(creds_escaped, strict=False)
 
-    credential = firebase_admin.credentials.Certificate(cert=creds_dict)
+    try:
+        credential = firebase_admin.credentials.Certificate(cert=creds)
+    except FileNotFoundError:
+        creds_escaped = creds.encode().decode('unicode_escape')
+        creds_dict = json.loads(creds_escaped, strict=False)
+        credential = firebase_admin.credentials.Certificate(cert=creds_dict)
+
     firebase_admin.initialize_app(credential=credential)
 
     from .auth import Token, TokenRevoke, TokenRefresh
