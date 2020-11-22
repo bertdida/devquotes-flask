@@ -38,6 +38,8 @@ class Development(Config):
 
     SQLALCHEMY_ECHO = True
     JWT_ACCESS_TOKEN_EXPIRES = 10  # seconds
+    JWT_COOKIE_SECURE = False
+    JWT_COOKIE_CSRF_PROTECT = False
 
 
 class Production(Config):
